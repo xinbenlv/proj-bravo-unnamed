@@ -10,11 +10,11 @@ This replaces
 
 ## Data Structure
 
-### `Accounts`
+### `Account`
  - `accountId`
  - `name`
 
-### `Transactions` Table: for all transactions
+### `Transaction` Table: for all transactions
  - `transactionId`
  - `timestamp`
  - `sender`: this could be the system as well 
@@ -23,9 +23,8 @@ This replaces
  - `note`
 
 Method: `addTransaction(sender, receiver, note)`
- 
 
-### `Recognitions` Table: for each zgThx award record
+### `Recognition` Table: for each zgThx award record
  - `nominationId`
  - `nominator`
  - `receiver`
@@ -33,11 +32,11 @@ Method: `addTransaction(sender, receiver, note)`
  - `amount`
  - `approvalId`
 
-### `Approvals` Table: for each 
+### `Approval` Table: for each 
  - `id`
  - `nominationId`
 
-### `Likes` Table:
+### `Like` Table:
  - `liker`
  - `nominationId` - only one required
  
