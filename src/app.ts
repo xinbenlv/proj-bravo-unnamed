@@ -1,7 +1,9 @@
 const Koa = require('koa');
 const Router = require("koa-router");
 const app = new Koa();
-const rootRouter = new Router();
+const apiRouter = new Router();
+const bodyParser = require('koa-bodyparser');
+const serve = require('koa-static');
 
 const log4js = require('log4js');
 const logger = log4js.getLogger();
@@ -12,63 +14,63 @@ logger.level = 'debug';
 let db = {
   account: {
     account0: {
-      accountId: `account0`,
-      accountName: '(System)',
+      id: `(System)`,
     },
     account1: {
-      accountId: `account1`,
-      accountName: 'Zainan Zhou',
+      id: `ZainanZhou`,
     },
     account2: {
-      accountId: `account2`,
-      accountName: 'Peipei Wang',
+      id: `PeipeiWang`,
     },
     account3: {
-      accountId: `account3`,
-      accountName: 'William Chen',
+      id: `WilliamChen`,
     }
   },
   tx: {
     tx1: {
       txId: `tx1`,
       timestamp: `2018-11-01-20-15`,
-      sender: `0`,
-      receiver: `2`,
+      sender: `(System)`,
+      receiver: `ZainanZhou`,
       amount: 100
     },
     tx2: {
       txId: `tx1`,
       timestamp: `2018-11-01-20-16`,
-      sender: `1`,
-      receiver: `2`,
+      sender: `ZainanZhou`,
+      receiver: `PeipeiWang`,
       amount: 50
     },
     tx3: {
       txId: `tx1`,
       timestamp: `2018-11-01-20-17`,
-      sender: `account0`,
-      receiver: `account2`,
+      sender: `(System)`,
+      receiver: `PeipeiWang`,
       amount: 100
     },
   },
   bravo: {
     bravo1: {
       recognitionId: `bravo1`,
-      nominator: `account1`,
-      receiver: `account2`,
+      giver: `ZainanZhou`,
+      receivers: [`PeipeiWang`, `ZainanZhou`, `WilliamChen`], // as a set
       type: `AttendMeeting`,
       amount: 100,
       approvalId: `approval1`,
-      reason: `设计组例会`
+      reason: `zgThx例会`,
+      likers: new Set([`ZainanZhou`, `PeipeiWang`]),
+      isApproved: true,
     },
     bravo2: {
       recognitionId: `bravo2`,
-      nominator: `account1`,
-      receiver: `account2`,
+      giver: `ZainanZhou`,
+      receivers: [`WilliamChen`],
       type: `OrganizeMeeting`,
       amount: 100,
       approvalId: `approval1`,
-      reason: `设计组例会`
+      reason: `设计组例会`,
+      likers: new Set([`WilliamChen`]),
+      isApproved: false
     },
   },
 
@@ -76,18 +78,20 @@ let db = {
 
 app.db = db;
 
-const dataTypes = [`account`, 'tx', `bravo`, `like`, `approval`];
+app.meId = 'ZainanZhou';  // TODO(zzn): change to by session
+
+const dataTypes = [`account`, 'tx', `bravo`];
 
 dataTypes.forEach(d => {
-  rootRouter.get(`/${d}`, async ctx => {
+  apiRouter.get(`/${d}`, async ctx => {
     ctx.body = `Entry point for ${d}.`;
   });
 
-  rootRouter.get(`/${d}/all`, async ctx => {
+  apiRouter.get(`/${d}/all`, async ctx => {
     ctx.body = ctx.app.db[d];
   });
 
-  rootRouter.get(`/${d}/:id`, async ctx => {
+  apiRouter.get(`/${d}/:id`, async ctx => {
     let item = ctx.app.db[d][ctx.params.id];
     if (item) {
       ctx.body = item;
@@ -98,8 +102,27 @@ dataTypes.forEach(d => {
   });
 });
 
+// TODO(zzn): Method Create Bravo
+apiRouter.post(`/bravo/create`, async ctx => {
+  let bravo = ctx.request.body; // TODO(zzn): validate.
+  ctx.app.db.bravo[bravo.id] = bravo; // Adding the new bravo
+});
 
-app.use(rootRouter.routes()).use(rootRouter.allowedMethods());
+// TODO(zzn): Me Too!
+apiRouter.post(`/bravo/meToo/:id`, async ctx => {
+  let bravo = ctx.app.db.bravo[ctx.request.params.id];
+  bravo.receivers.add(ctx.app.meId);
+});
+
+// TODO(zzn): Like -> Trigger Approval and
+apiRouter.post(`/bravo/like/:id`, async ctx => {
+  let bravo = ctx.app.db.bravo[ctx.request.params.id];
+  bravo.likers.add(ctx.app.meId);
+});
+
+app.use(bodyParser());
+app.use(serve('./src/client'));
+app.use(apiRouter.routes()).use(apiRouter.allowedMethods());
 
 let port = process.env.PORT || 8000;
 app.listen(port);
