@@ -95,6 +95,9 @@ app.meId = 'ZainanZhou';  // TODO(zzn): change to by session
 const dataTypes = [`account`, 'tx', `bravo`];
 
 dataTypes.forEach(d => {
+  apiRouter.get(`/`, async ctx => {
+    ctx.redirect('/ui/airtable');
+  });
   apiRouter.get(`/${d}`, async ctx => {
     ctx.body = `Entry point for ${d}.`;
   });
