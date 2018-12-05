@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>载歌在谷社区 点数系统</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="/cover.css" rel="stylesheet">
+</head>
+<body class="text-center vsc-initialized">
+    <div class="container d-flex w-100 h-100 p-3 mx-auto flex-column">
+        <header class="masthead mb-auto">
+            <div class="inner">
+                <h3 class="masthead-brand">载歌在谷社区</h3>
+                <nav class="nav nav-masthead mr-auto justify-content-center">
+                    <a class="nav-link active" href="#">Home</a>
+                </nav>
+            </div>
+        </header>
+        <main class="inner cover">
+            <div class="d-flex justify-content-end">
+                <div class="form-inline my-2" _lpchecked="1">
+                    <input id="searchBar" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                    <button id="searchBtn" class="btn btn-outline-success my-2 my-sm-0">查找志愿者点数</button>
+                </div>
+            </div>
+            <%- body %>
+        </main>
+        <footer class="mastfoot mt-auto">
+            <div class="inner">
+                <p>找不到的话用邮箱或者中文、英文拼写试试看</p>
+            </div>
+        </footer>
+    </div>
+</body>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+            crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script type="text/javascript">
+      $( document ).ready(function() {
+        // Handler for .ready() called.
+        console.log(`Docu ready!`);
+        document.getElementById("searchBtn").onclick = function () {
+          console.log(`navigate`, document.getElementById('searchBar').value);
+          let searchTxt =  document.getElementById('searchBar').value;
+          let newUrl = "/ui/airtable/find/" + searchTxt;
+          console.log(`New Url`, newUrl);
+          window.location.href = newUrl;
+        };
+      });
+
+    </script>
+</html>

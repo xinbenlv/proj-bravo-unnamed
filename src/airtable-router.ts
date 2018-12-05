@@ -4,6 +4,7 @@ const Airtable = require('airtable');
 console.assert(process.env.AIRTABLE_KEY, 'need to define export AIRTABLE_KEY= <key>');
 const base = new Airtable({apiKey: process.env.AIRTABLE_KEY}).base('appHfV3iolIVA2fq4');
 
+
 export class AirTableHandler {
   public airTableRouter;
   private isInit = false;
@@ -39,22 +40,57 @@ export class AirTableHandler {
     });
     this.airTableRouter.get(`/airtable/find/:searchRegEx`, async ctx => {
       if (!this.isInit) await this.loadZGZG();
+
       let searchRegEx = ctx.params.searchRegEx;
-      let regex = new RegExp(searchRegEx);
-      let ret = [];
-      for (const volId in this.volPointsMap) {
-        let points = this.volPointsMap[volId];
-        let name = this.volunteerMap[volId].fields['Name'];
-        let email = this.volunteerMap[volId].fields['Email Original'];
-        if (regex.test(name) || regex.test(email))
+      let ret = this.findUser(searchRegEx);
+      ctx.body = ret;
+    });
+    this.airTableRouter.get(`/ui/airtable/find/:searchRegEx` ,async ctx => {
+      if (!this.isInit) await this.loadZGZG();
+      let searchRegEx = ctx.params.searchRegEx;
+      let users = this.findUser(searchRegEx);
+      console.log(`Rendering user`, users);
+      await ctx.render('mvp/user', {users: users} );
+    });
+    this.airTableRouter.get(`/ui/airtable/points/:id` ,async ctx => {
+      if (!this.isInit) await this.loadZGZG();
+      let volId = ctx.params.id;
+      if (this.volunteerMap[volId] &&  this.volPointsMap[volId]) {
+        let users = [
+          {
+            name: this.volunteerMap[volId].fields['Name'],
+            points: this.volPointsMap[volId]
+          }
+        ];
+        await ctx.render('mvp/user', {users: users} );
+      } else {
+        ctx.status = 404;
+        ctx.body = "啥也没有找到";
+      }
+    });
+
+
+    this.airTableRouter.get(`/ui/airtable` ,async ctx => {
+      await ctx.render('mvp/user', {users: []} );
+    });
+
+  }
+
+  private findUser(searchRegEx:string) {
+    let regex = new RegExp(searchRegEx);
+    let ret = [];
+    for (const volId in this.volPointsMap) {
+      let points = this.volPointsMap[volId];
+      let name = this.volunteerMap[volId].fields['Name'];
+      let email = this.volunteerMap[volId].fields['Email Original'];
+      if (regex.test(name) || regex.test(email))
         ret.push({
           id: volId,
           points: points,
           name: name
         });
-      }
-      ctx.body = ret;
-    });
+    }
+    return ret;
   }
 
   private loadZGZG = async function() {

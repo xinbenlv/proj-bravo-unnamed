@@ -7,6 +7,15 @@ const apiRouter = new Router();
 const airTableHandler = new AirTableHandler();
 const bodyParser = require('koa-bodyparser');
 const serve = require('koa-static');
+const render = require('koa-ejs');
+const path = require('path');
+render(app, {
+  root: path.join(__dirname, 'client'),
+  layout: 'mvp/template',
+  viewExt: 'html',
+  cache: false,
+  debug: true
+});
 
 const log4js = require('log4js');
 const logger = log4js.getLogger();

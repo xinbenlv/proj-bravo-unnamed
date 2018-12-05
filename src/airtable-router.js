@@ -104,21 +104,54 @@ class AirTableHandler {
             if (!this.isInit)
                 yield this.loadZGZG();
             let searchRegEx = ctx.params.searchRegEx;
-            let regex = new RegExp(searchRegEx);
-            let ret = [];
-            for (const volId in this.volPointsMap) {
-                let points = this.volPointsMap[volId];
-                let name = this.volunteerMap[volId].fields['Name'];
-                let email = this.volunteerMap[volId].fields['Email Original'];
-                if (regex.test(name) || regex.test(email))
-                    ret.push({
-                        id: volId,
-                        points: points,
-                        name: name
-                    });
-            }
+            let ret = this.findUser(searchRegEx);
             ctx.body = ret;
         }));
+        this.airTableRouter.get(`/ui/airtable/find/:searchRegEx`, (ctx) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.isInit)
+                yield this.loadZGZG();
+            let searchRegEx = ctx.params.searchRegEx;
+            let users = this.findUser(searchRegEx);
+            console.log(`Rendering user`, users);
+            yield ctx.render('mvp/user', { users: users });
+        }));
+        this.airTableRouter.get(`/ui/airtable/points/:id`, (ctx) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.isInit)
+                yield this.loadZGZG();
+            let volId = ctx.params.id;
+            if (this.volunteerMap[volId] && this.volPointsMap[volId]) {
+                let users = [
+                    {
+                        name: this.volunteerMap[volId].fields['Name'],
+                        points: this.volPointsMap[volId]
+                    }
+                ];
+                yield ctx.render('mvp/user', { users: users });
+            }
+            else {
+                ctx.status = 404;
+                ctx.body = "啥也没有找到";
+            }
+        }));
+        this.airTableRouter.get(`/ui/airtable`, (ctx) => __awaiter(this, void 0, void 0, function* () {
+            yield ctx.render('mvp/user', { users: [] });
+        }));
+    }
+    findUser(searchRegEx) {
+        let regex = new RegExp(searchRegEx);
+        let ret = [];
+        for (const volId in this.volPointsMap) {
+            let points = this.volPointsMap[volId];
+            let name = this.volunteerMap[volId].fields['Name'];
+            let email = this.volunteerMap[volId].fields['Email Original'];
+            if (regex.test(name) || regex.test(email))
+                ret.push({
+                    id: volId,
+                    points: points,
+                    name: name
+                });
+        }
+        return ret;
     }
 }
 exports.AirTableHandler = AirTableHandler;

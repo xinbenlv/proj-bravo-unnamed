@@ -9,11 +9,13 @@
     "koa": "^2.6.1",
     "koa-body": "^4.0.4",
     "koa-bodyparser": "^4.2.1",
+    "koa-ejs": "^4.1.2",
     "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "log4js": "^3.0.6",
     "mongodb": "^3.1.8",
+    "path": "^0.12.7",
     "ts-node": "^7.0.1",
     "tsc": "^1.20150623.0",
     "typescript": "^3.2.1"

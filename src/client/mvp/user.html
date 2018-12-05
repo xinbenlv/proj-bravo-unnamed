@@ -1,0 +1,17 @@
+
+<table class="table">
+    <thead>
+    <th>姓名</th>
+    <th>点数</th>
+    </thead>
+    <tbody>
+
+    <% users.forEach(function (user) {%>
+        <tr>
+            <td><a href="/ui/airtable/points/<%= user.id %>"><%= user.name %></a></td>
+            <td><%= user.points %></td>
+        </tr>
+    <% })%>
+    </tbody>
+</table>
+
