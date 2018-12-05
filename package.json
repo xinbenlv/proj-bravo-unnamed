@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@types/node": "^10.12.2",
+    "airtable": "^0.5.8",
     "koa": "^2.6.1",
     "koa-body": "^4.0.4",
     "koa-bodyparser": "^4.2.1",
