@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -6,10 +7,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+const airtable_router_1 = require("./airtable-router");
 const Koa = require('koa');
 const Router = require("koa-router");
 const app = new Koa();
 const apiRouter = new Router();
+const airTableHandler = new airtable_router_1.AirTableHandler();
 const bodyParser = require('koa-bodyparser');
 const serve = require('koa-static');
 const log4js = require('log4js');
@@ -119,6 +123,7 @@ apiRouter.post(`/bravo/like/:id`, (ctx) => __awaiter(this, void 0, void 0, funct
 app.use(bodyParser());
 app.use(serve('./src/client'));
 app.use(apiRouter.routes()).use(apiRouter.allowedMethods());
+app.use(airTableHandler.airTableRouter.routes()).use(airTableHandler.airTableRouter.allowedMethods());
 let port = process.env.PORT || 8000;
 app.listen(port);
 logger.info(`Started app at port ${port}`);

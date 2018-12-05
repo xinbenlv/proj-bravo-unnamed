@@ -1,7 +1,10 @@
+import {AirTableHandler} from "./airtable-router";
+
 const Koa = require('koa');
 const Router = require("koa-router");
 const app = new Koa();
 const apiRouter = new Router();
+const airTableHandler = new AirTableHandler();
 const bodyParser = require('koa-bodyparser');
 const serve = require('koa-static');
 
@@ -120,9 +123,11 @@ apiRouter.post(`/bravo/like/:id`, async ctx => {
   bravo.likers.add(ctx.app.meId);
 });
 
+
 app.use(bodyParser());
 app.use(serve('./src/client'));
 app.use(apiRouter.routes()).use(apiRouter.allowedMethods());
+app.use(airTableHandler.airTableRouter.routes()).use(airTableHandler.airTableRouter.allowedMethods());
 
 let port = process.env.PORT || 8000;
 app.listen(port);
