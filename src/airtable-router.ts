@@ -37,6 +37,24 @@ export class AirTableHandler {
             points: this.volPointsMap[volId]
           }];
     });
+    this.airTableRouter.get(`/airtable/find/:searchRegEx`, async ctx => {
+      if (!this.isInit) await this.loadZGZG();
+      let searchRegEx = ctx.params.searchRegEx;
+      let regex = new RegExp(searchRegEx);
+      let ret = [];
+      for (const volId in this.volPointsMap) {
+        let points = this.volPointsMap[volId];
+        let name = this.volunteerMap[volId].fields['Name'];
+        let email = this.volunteerMap[volId].fields['Email Original'];
+        if (regex.test(name) || regex.test(email))
+        ret.push({
+          id: volId,
+          points: points,
+          name: name
+        });
+      }
+      ctx.body = ret;
+    });
   }
 
   private loadZGZG = async function() {

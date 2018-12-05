@@ -100,6 +100,25 @@ class AirTableHandler {
                 }
             ];
         }));
+        this.airTableRouter.get(`/airtable/find/:searchRegEx`, (ctx) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.isInit)
+                yield this.loadZGZG();
+            let searchRegEx = ctx.params.searchRegEx;
+            let regex = new RegExp(searchRegEx);
+            let ret = [];
+            for (const volId in this.volPointsMap) {
+                let points = this.volPointsMap[volId];
+                let name = this.volunteerMap[volId].fields['Name'];
+                let email = this.volunteerMap[volId].fields['Email Original'];
+                if (regex.test(name) || regex.test(email))
+                    ret.push({
+                        id: volId,
+                        points: points,
+                        name: name
+                    });
+            }
+            ctx.body = ret;
+        }));
     }
 }
 exports.AirTableHandler = AirTableHandler;
