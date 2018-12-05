@@ -15,7 +15,11 @@
     "log4js": "^3.0.6",
     "mongodb": "^3.1.8"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ts-node": "^7.0.1",
+    "tsc": "^1.20150623.0",
+    "typescript": "^3.2.1"
+  },
   "scripts": {
     "start": "ts-node src/app.ts"
   },
