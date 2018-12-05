@@ -13,9 +13,7 @@
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "log4js": "^3.0.6",
-    "mongodb": "^3.1.8"
-  },
-  "devDependencies": {
+    "mongodb": "^3.1.8",
     "ts-node": "^7.0.1",
     "tsc": "^1.20150623.0",
     "typescript": "^3.2.1"
