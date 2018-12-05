@@ -1,5 +1,5 @@
 
-<%if (users) { %>
+<%if (users.length > 0) { %>
     <%if (typeof title !== 'undefined') { %>
         <h1><%= title %></h1>
     <% } %>
@@ -20,7 +20,8 @@
     </table>
 
 <% } %>
-<%if (!users) { %>
-<h1>没有找到任何结果哦</h1>
+<%if (users.length == 0) { %>
+<h3>没有找到任何结果哦，试试看输入"张"</h3>
+
 <% } %>
 
