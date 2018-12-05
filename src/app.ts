@@ -96,7 +96,7 @@ const dataTypes = [`account`, 'tx', `bravo`];
 
 dataTypes.forEach(d => {
   apiRouter.get(`/`, async ctx => {
-    ctx.redirect('/ui/airtable');
+    ctx.redirect('/ui/airtable/top10');
   });
   apiRouter.get(`/${d}`, async ctx => {
     ctx.body = `Entry point for ${d}.`;

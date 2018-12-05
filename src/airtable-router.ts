@@ -70,10 +70,25 @@ export class AirTableHandler {
     });
 
 
-    this.airTableRouter.get(`/ui/airtable` ,async ctx => {
-      await ctx.render('mvp/user', {users: []} );
+    this.airTableRouter.get(`/ui/airtable/top10` ,async ctx => {
+      if (!this.isInit) await this.loadZGZG();
+      let users =this.findTopTen();
+      console.log(`Top 10`, users);
+      await ctx.render('mvp/user', {title: `Top 10`, users: this.findTopTen()} );
     });
 
+  }
+  private findTopTen():Array<any> {
+    let ret = [];
+    for (const volId in this.volPointsMap) {
+      let points = this.volPointsMap[volId];
+      let name = this.volunteerMap[volId].fields['Name'];
+      ret.push({id:volId, name:name, points:points});
+    }
+
+    console.log(`original 10`, ret);
+    ret.sort((a,b) => {return a.points - b.points}).reverse();
+    return ret.slice(0,10);
   }
 
   private findUser(searchRegEx:string) {

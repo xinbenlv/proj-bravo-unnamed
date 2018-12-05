@@ -133,9 +133,24 @@ class AirTableHandler {
                 ctx.body = "啥也没有找到";
             }
         }));
-        this.airTableRouter.get(`/ui/airtable`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            yield ctx.render('mvp/user', { users: [] });
+        this.airTableRouter.get(`/ui/airtable/top10`, (ctx) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.isInit)
+                yield this.loadZGZG();
+            let users = this.findTopTen();
+            console.log(`Top 10`, users);
+            yield ctx.render('mvp/user', { title: `Top 10`, users: this.findTopTen() });
         }));
+    }
+    findTopTen() {
+        let ret = [];
+        for (const volId in this.volPointsMap) {
+            let points = this.volPointsMap[volId];
+            let name = this.volunteerMap[volId].fields['Name'];
+            ret.push({ id: volId, name: name, points: points });
+        }
+        console.log(`original 10`, ret);
+        ret.sort((a, b) => { return a.points - b.points; }).reverse();
+        return ret.slice(0, 10);
     }
     findUser(searchRegEx) {
         let regex = new RegExp(searchRegEx);
