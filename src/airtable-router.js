@@ -73,6 +73,22 @@ class AirTableHandler {
             });
         };
         this.airTableRouter = new Router();
+        this.airTableRouter.get(`/airtable/points/all`, (ctx) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.isInit)
+                yield this.loadZGZG();
+            let ret = [];
+            for (const volId in this.volPointsMap) {
+                let points = this.volPointsMap[volId];
+                let name = this.volunteerMap[volId].fields['Name'];
+                ret.push({
+                    id: volId,
+                    points: points,
+                    name: name
+                });
+                console.log(volId, name, points);
+            }
+            ctx.body = ret;
+        }));
         this.airTableRouter.get(`/airtable/points/:id`, (ctx) => __awaiter(this, void 0, void 0, function* () {
             if (!this.isInit)
                 yield this.loadZGZG();
