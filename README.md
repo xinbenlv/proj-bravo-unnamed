@@ -5,6 +5,7 @@ Using the AirTable as backend to build the zgThx
 
 ### Features
 - [ ] show points of individual users
+- [ ] show how points was gained by individual users
 - [ ] show points of top 10 point-leader
 - [ ] submit in peer bonus
 - [ ] show latest peer bonus
