@@ -1,20 +1,24 @@
-A system for the zgthx
-This replaces 
+# A system for the zgthx
 
-## Usual Journey
+## Version 1 (current)
+Using the AirTable as backend to build the zgThx
+
+## Version 2 (next)
+
+### User Journey
 1. Create an activity (meeting, event, worktask, etc)
 2. Me too - I am also in the activity.
   (wait, who has the right to do so?)
 3. Like: when there are enough likes, it gets approved.
 4. Check balance 
 
-## Data Structure
+### Data Structure
 
-### `Account`
+#### `Account`
  - `accountId`
  - `name`
 
-### `Transaction` Table: for all transactions
+#### `Transaction` Table: for all transactions
  - `transactionId`
  - `timestamp`
  - `sender`: this could be the system as well 
@@ -24,7 +28,7 @@ This replaces
 
 Method: `addTransaction(sender, receiver, note)`
 
-### `Recognition` Table: for each zgThx award record
+#### `Recognition` Table: for each zgThx award record
  - `nominationId`
  - `nominator`
  - `receiver`
@@ -32,11 +36,11 @@ Method: `addTransaction(sender, receiver, note)`
  - `amount`
  - `approvalId`
 
-### `Approval` Table: for each 
+#### `Approval` Table: for each 
  - `id`
  - `nominationId`
 
-### `Like` Table:
+#### `Like` Table:
  - `liker`
  - `nominationId` - only one required
  
