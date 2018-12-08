@@ -3,6 +3,12 @@
 ## Version 1 (current)
 Using the AirTable as backend to build the zgThx
 
+### Features
+- [ ] show points of individual users
+- [ ] show points of top 10 point-leader
+- [ ] submit in peer bonus
+- [ ] show latest peer bonus
+
 ## Version 2 (next)
 
 ### User Journey
