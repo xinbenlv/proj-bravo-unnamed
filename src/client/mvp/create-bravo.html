@@ -1,60 +1,4 @@
-<script>
-  //
-  // Use internal $.serializeArray to get list of form elements which is
-  // consistent with $.serialize
-  //
-  // From version 2.0.0, $.serializeObject will stop converting [name] values
-  // to camelCase format. This is *consistent* with other serialize methods:
-  //
-  //   - $.serialize
-  //   - $.serializeArray
-  //
-  // If you require camel casing, you can either download version 1.0.4 or map
-  // them yourself.
-  //
-
-  function submitForm () {
-    $.fn.serializeObject = function () {
-      "use strict";
-
-      var result = {};
-      var extend = function (i, element) {
-        var node = result[element.name];
-
-        // If node with same name exists already, need to convert it to an array as it
-        // is a multi-value field (i.e., checkboxes)
-
-        if ('undefined' !== typeof node && node !== null) {
-          if ($.isArray(node)) {
-            node.push(element.value);
-          } else {
-            result[element.name] = [node, element.value];
-          }
-        } else {
-          result[element.name] = element.value;
-        }
-      };
-
-      $.each(this.serializeArray(), extend);
-      return result;
-    };
-    
-    let formData = $("#formCreateBravo").serializeObject();
-    console.log(`Start submitting`, formData);
-    $.ajax({
-      type: 'POST',
-      dataType: 'json',
-      url: '/airtable/bravo/create',
-      data: formData,
-      success: (response) => {
-        console.log('Response', response);
-      }
-    });
-  }
-
-</script>
-
-<form  id="formCreateBravo" action="">
+<form id="formCreateBravo" action="">
     <div class="mb-3">
         <label for="bravo-type">类别</label>
         <div class="input-group">
@@ -68,7 +12,7 @@
     <div class="mb-3">
         <label for="bravo-type">时间日期</label>
         <div class="input-group">
-            <input type="text" name="时间日期" class="form-control" id="bravo-date" placeholder="时间日期" required="">
+            <input type="text" name="时间日期" class="form-control" id="bravo_date" placeholder="时间日期" required="">
             <div class="invalid-feedback" style="width: 100%;">
                 日期
             </div>
