@@ -162,7 +162,20 @@ class AirTableHandler {
             ctx.body = `OK`;
         }));
         this.airTableRouter.get(`/ui/airtable/bravo/create`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            yield ctx.render('mvp/create-bravo', {});
+            if (!this.isInit)
+                yield this.loadZGZG();
+            let ret = [];
+            for (let vol of this.volListEntries) {
+                ret.push({
+                    id: vol.id,
+                    displayName: vol.fields.DisplayName
+                });
+                console.log(`vol.fields.DisplayName`, vol.fields.DisplayName);
+            }
+            console.log(`ret`, ret);
+            yield ctx.render('mvp/create-bravo', {
+                users: ret
+            });
         }));
         this.airTableRouter.get(`/ui/airtable/top10`, (ctx) => __awaiter(this, void 0, void 0, function* () {
             if (!this.isInit)

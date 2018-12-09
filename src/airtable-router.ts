@@ -100,8 +100,18 @@ export class AirTableHandler {
     });
 
     this.airTableRouter.get(`/ui/airtable/bravo/create`, async ctx => {
+      if (!this.isInit) await this.loadZGZG();
+      let ret = [];
+      for (let vol of this.volListEntries) {
+        ret.push({
+          id: vol.id,
+          displayName: vol.fields.DisplayName
+        });
+        console.log(`vol.fields.DisplayName`, vol.fields.DisplayName);
+      }
+      console.log(`ret`, ret);
       await ctx.render('mvp/create-bravo', {
-
+        users: ret
       });
     });
 
