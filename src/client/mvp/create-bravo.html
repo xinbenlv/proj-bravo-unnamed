@@ -21,7 +21,8 @@
     $('.ui.fluid.search.dropdown')
         .dropdown({
           clearable: true,
-          placeholder: 'any'
+          allowAdditions: true,
+          fullTextSearch: true
         });
   });
   let submitForm = function () {
@@ -96,7 +97,7 @@
     </div>
     <div>
         <label for="bravo-senders">发出人</label>
-        <select name="发出人(sheet)" id="bravo-senders" class="ui fluid search dropdown" multiple="">
+        <select name="发出人(sheet)[]" id="bravo-senders" class="ui fluid search dropdown" multiple="">
             <% users.forEach(function (user) {%>
             <option value="<%= user.id %>"><%= user.displayName %></option>
             <% })%>
@@ -104,7 +105,7 @@
     </div>
     <div>
         <label for="bravo-receivers">接收人</label>
-        <select name="接收人(sheet)" id="bravo-receivers" class="ui fluid search dropdown" multiple="">
+        <select name="接收人(sheet)[]" id="bravo-receivers" class="ui fluid search dropdown" multiple="">
             <% users.forEach(function (user) {%>
             <option value="<%= user.id %>"><%= user.displayName %></option>
             <% })%>
