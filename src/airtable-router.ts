@@ -79,6 +79,24 @@ export class AirTableHandler {
       }
     });
 
+      this.airTableRouter.post(`/ui/airtable/bravo/create`, async ctx => {
+      const bravo = {
+        "类别": "Peer Bonus",
+        "时间日期": "2018-09-13", // TODO (update with today)
+        "分发原因": "test peer bonus TODO REMOVE this",
+        "点数": 200,
+        "发出人(sheet)": [
+          "rec0dTfD6RUDPTfVt" // 周载南
+        ],
+        "接收人(sheet)": [
+          "reckfSTrEoxQBRuZP", // 李璐
+        ]
+      };
+      console.log(`Start creating bravo:`, bravo);
+      await this.createBravo(bravo);
+      console.log(`Finished creating bravo:`, bravo);
+    });
+
 
     this.airTableRouter.get(`/ui/airtable/top10`, async ctx => {
       if (!this.isInit) await this.loadZGZG();
@@ -241,6 +259,15 @@ export class AirTableHandler {
       });
     });
   };
+
+  private createBravo(bravo:object):Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      base('福利点数').create(bravo, function(err, record) {
+        if (err) reject(err);
+        else resolve(record);
+      });
+    });
+  }
 }
 
 

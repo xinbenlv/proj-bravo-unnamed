@@ -142,6 +142,23 @@ class AirTableHandler {
                 ctx.body = "啥也没有找到";
             }
         }));
+        this.airTableRouter.post(`/ui/airtable/bravo/create`, (ctx) => __awaiter(this, void 0, void 0, function* () {
+            const bravo = {
+                "类别": "Peer Bonus",
+                "时间日期": "2018-09-13",
+                "分发原因": "test peer bonus TODO REMOVE this",
+                "点数": 200,
+                "发出人(sheet)": [
+                    "rec0dTfD6RUDPTfVt" // 周载南
+                ],
+                "接收人(sheet)": [
+                    "reckfSTrEoxQBRuZP",
+                ]
+            };
+            console.log(`Start creating bravo:`, bravo);
+            yield this.createBravo(bravo);
+            console.log(`Finished creating bravo:`, bravo);
+        }));
         this.airTableRouter.get(`/ui/airtable/top10`, (ctx) => __awaiter(this, void 0, void 0, function* () {
             if (!this.isInit)
                 yield this.loadZGZG();
@@ -235,6 +252,16 @@ class AirTableHandler {
                 });
         }
         return ret;
+    }
+    createBravo(bravo) {
+        return new Promise((resolve, reject) => {
+            base('福利点数').create(bravo, function (err, record) {
+                if (err)
+                    reject(err);
+                else
+                    resolve(record);
+            });
+        });
     }
 }
 exports.AirTableHandler = AirTableHandler;
