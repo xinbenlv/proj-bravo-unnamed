@@ -1,0 +1,24 @@
+<table class="table">
+    <thead>
+    <th>类别</th>
+    <th>时间日期</th>
+    <th>发出人</th>
+    <th>接收人</th>
+    <th>分发原因</th>
+    <th>点数</th>
+    </thead>
+    <tbody>
+
+    <% bravos.forEach(function (bravo) {%>
+    <tr>
+        <td><%= bravo['类别'] || '尚待补充' %></td>
+        <td><%= bravo['时间日期'] || '尚待补充' %></td>
+        <td><%= bravo['发出人'] %></td>
+        <td><%= bravo['接收人'] %></td>
+        <td><%= bravo['分发原因'] || '尚待补充' %></td>
+        <td><%= bravo['点数'] || '尚未分配'  %></td>
+
+    </tr>
+    <% })%>
+    </tbody>
+</table>

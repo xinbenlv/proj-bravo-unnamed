@@ -17,15 +17,16 @@ class AirTableHandler {
         this.isInit = false;
         this.volunteerMap = {};
         this.volPointsMap = {};
+        this.cacheExpiredAt = null;
         this.loadZGZG = function () {
             return __awaiter(this, void 0, void 0, function* () {
-                this.benefitPoints = yield this.loadTableFunc('福利点数');
-                this.volList = yield this.loadTableFunc('志愿者名单');
-                for (const v of this.volList) {
+                this.benefitPointsEntries = yield this.loadTableFunc('福利点数');
+                this.volListEntries = yield this.loadTableFunc('志愿者名单');
+                for (const v of this.volListEntries) {
                     this.volunteerMap[v.id] = v;
                     this.volPointsMap[v.id] = 0;
                 }
-                for (const b of this.benefitPoints) {
+                for (const b of this.benefitPointsEntries) {
                     let points = b.fields["点数"];
                     let vols = b.fields['接收人(sheet)'];
                     if (vols && points)
@@ -140,6 +141,65 @@ class AirTableHandler {
             console.log(`Top 10`, users);
             yield ctx.render('mvp/user', { title: `Top 10`, users: this.findTopTen() });
         }));
+        this.airTableRouter.get(`/ui/airtable/bravos/all`, (ctx) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.isInit)
+                yield this.loadZGZG();
+            let bravos = this.getBravosAll();
+            yield ctx.render('mvp/bravos', { bravos: bravos });
+        }));
+        this.airTableRouter.get(`/airtable/bravos/all`, (ctx) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.isInit)
+                yield this.loadZGZG();
+            let bravos = this.getBravosAll();
+            ctx.body = bravos;
+        }));
+        this.airTableRouter.get(`/airtable/bonuses`, (ctx) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.isInit)
+                yield this.loadZGZG();
+            let bravos = this.getBonuses().slice(0, 10);
+            ctx.body = bravos;
+        }));
+        this.airTableRouter.get(`/ui/airtable/bonuses`, (ctx) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.isInit)
+                yield this.loadZGZG();
+            let bravos = this.getBonuses().slice(0, 10);
+            yield ctx.render('mvp/bravos', { bravos: bravos });
+        }));
+    }
+    getBravosAll() {
+        let pointsEntries = this.benefitPointsEntries
+            .sort((a, b) => Date.parse(a.fields['时间日期'])
+            - Date.parse(b.fields['时间日期']))
+            .reverse();
+        let ret = pointsEntries.map(item => {
+            return {
+                发出人: (item.fields['发出人(sheet)'] || []).map(c => this.volunteerMap[c].fields['Name']),
+                接收人: (item.fields['接收人(sheet)'] || []).map(c => this.volunteerMap[c].fields['Name']),
+                分发原因: item.fields['分发原因'],
+                时间日期: item.fields['时间日期'],
+                类别: item.fields['类别'],
+                点数: item.fields['点数']
+            };
+        });
+        return ret;
+    }
+    getBonuses() {
+        let pointsEntries = this.benefitPointsEntries
+            .filter(item => ['Spot Bonus', 'Peer Bonus'].indexOf(item.fields.类别) >= 0)
+            .sort((a, b) => Date.parse(a.fields['时间日期'])
+            - Date.parse(b.fields['时间日期']))
+            .reverse();
+        let ret = pointsEntries.map(item => {
+            return {
+                发出人: (item.fields['发出人(sheet)'] || []).map(c => this.volunteerMap[c].fields['Name']),
+                接收人: (item.fields['接收人(sheet)'] || []).map(c => this.volunteerMap[c].fields['Name']),
+                分发原因: item.fields['分发原因'],
+                时间日期: item.fields['时间日期'],
+                类别: item.fields['类别'],
+                点数: item.fields['点数']
+            };
+        });
+        return ret;
     }
     findTopTen() {
         let ret = [];
