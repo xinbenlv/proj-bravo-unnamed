@@ -4,13 +4,13 @@
 Using the AirTable as backend to build the zgThx
 
 ### Features
-- [ ] show points of individual users
-- [ ] show how points was gained by individual users
+- [X] show points of individual users
+- [X] show how points was gained by individual users
 - [ ] invalidate cache after certain time
   - is it needed? or Heroku will help us do that?
-- [ ] show points of top 10 point-leader
+- [X] show points of top 10 point-leader
 - [ ] submit in peer bonus
-- [ ] show latest peer bonus
+- [X] show latest peer bonus
 
 ## Version 2 (next)
 

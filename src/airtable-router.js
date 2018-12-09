@@ -114,20 +114,28 @@ class AirTableHandler {
             let searchRegEx = ctx.params.searchRegEx;
             let users = this.findUser(searchRegEx);
             console.log(`Rendering user`, users);
-            yield ctx.render('mvp/user', { users: users });
+            yield ctx.render('mvp/users', { users: users });
         }));
         this.airTableRouter.get(`/ui/airtable/points/:id`, (ctx) => __awaiter(this, void 0, void 0, function* () {
             if (!this.isInit)
                 yield this.loadZGZG();
             let volId = ctx.params.id;
             if (this.volunteerMap[volId] && this.volPointsMap[volId]) {
-                let users = [
-                    {
-                        name: this.volunteerMap[volId].fields['Name'],
-                        points: this.volPointsMap[volId]
-                    }
-                ];
-                yield ctx.render('mvp/user', { users: users });
+                let user = {
+                    name: this.volunteerMap[volId].fields['Name'],
+                    points: this.volPointsMap[volId]
+                };
+                let receivedBravos = this.benefitPointsEntries
+                    .filter(item => (item.fields['接收人(sheet)'] || []).indexOf(volId) >= 0)
+                    .map(item => this.extractBravoForUI(item));
+                let sentBravos = this.benefitPointsEntries
+                    .filter(item => (item.fields['发出人(sheet)'] || []).indexOf(volId) >= 0)
+                    .map(item => this.extractBravoForUI(item));
+                yield ctx.render('mvp/single-user', {
+                    user: user,
+                    receivedBravos: receivedBravos,
+                    sentBravos: sentBravos,
+                });
             }
             else {
                 ctx.status = 404;
@@ -139,7 +147,7 @@ class AirTableHandler {
                 yield this.loadZGZG();
             let users = this.findTopTen();
             console.log(`Top 10`, users);
-            yield ctx.render('mvp/user', { title: `Top 10`, users: this.findTopTen() });
+            yield ctx.render('mvp/users', { title: `Top 10`, users: this.findTopTen() });
         }));
         this.airTableRouter.get(`/ui/airtable/bravos/all`, (ctx) => __awaiter(this, void 0, void 0, function* () {
             if (!this.isInit)
@@ -172,16 +180,19 @@ class AirTableHandler {
             - Date.parse(b.fields['时间日期']))
             .reverse();
         let ret = pointsEntries.map(item => {
-            return {
-                发出人: (item.fields['发出人(sheet)'] || []).map(c => this.volunteerMap[c].fields['Name']),
-                接收人: (item.fields['接收人(sheet)'] || []).map(c => this.volunteerMap[c].fields['Name']),
-                分发原因: item.fields['分发原因'],
-                时间日期: item.fields['时间日期'],
-                类别: item.fields['类别'],
-                点数: item.fields['点数']
-            };
+            return this.extractBravoForUI(item);
         });
         return ret;
+    }
+    extractBravoForUI(item) {
+        return {
+            发出人: (item.fields['发出人(sheet)'] || []).map(c => this.volunteerMap[c].fields['Name']),
+            接收人: (item.fields['接收人(sheet)'] || []).map(c => this.volunteerMap[c].fields['Name']),
+            分发原因: item.fields['分发原因'],
+            时间日期: item.fields['时间日期'],
+            类别: item.fields['类别'],
+            点数: item.fields['点数']
+        };
     }
     getBonuses() {
         let pointsEntries = this.benefitPointsEntries
@@ -191,8 +202,18 @@ class AirTableHandler {
             .reverse();
         let ret = pointsEntries.map(item => {
             return {
-                发出人: (item.fields['发出人(sheet)'] || []).map(c => this.volunteerMap[c].fields['Name']),
-                接收人: (item.fields['接收人(sheet)'] || []).map(c => this.volunteerMap[c].fields['Name']),
+                发出人: (item.fields['发出人(sheet)'] || []).map(c => {
+                    return {
+                        name: this.volunteerMap[c].fields['Name'],
+                        id: this.volunteerMap[c].id
+                    };
+                }),
+                接收人: (item.fields['接收人(sheet)'] || []).map(c => {
+                    return {
+                        name: this.volunteerMap[c].fields['Name'],
+                        id: this.volunteerMap[c].id
+                    };
+                }),
                 分发原因: item.fields['分发原因'],
                 时间日期: item.fields['时间日期'],
                 类别: item.fields['类别'],

@@ -13,8 +13,16 @@
     <tr>
         <td><%= bravo['类别'] || '尚待补充' %></td>
         <td><%= bravo['时间日期'] || '尚待补充' %></td>
-        <td><%= bravo['发出人'] %></td>
-        <td><%= bravo['接收人'] %></td>
+        <td>
+            <% bravo['发出人'].forEach(function (user) {%>
+                <a href="/ui/airtable/points/<%= user.id %>"><%= user.name %></a>
+            <% })%>
+        </td>
+        <td>
+            <% bravo['接收人'].forEach(function (user) {%>
+            <a href="/ui/airtable/points/<%= user.id %>"><%= user.name %></a>
+            <% })%>
+        </td>
         <td><%= bravo['分发原因'] || '尚待补充' %></td>
         <td><%= bravo['点数'] || '尚未分配'  %></td>
 
