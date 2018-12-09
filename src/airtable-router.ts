@@ -120,16 +120,23 @@ export class AirTableHandler {
                 - Date.parse(b.fields['时间日期']))
         .reverse();
 
-    let ret = pointsEntries.map(item => {
-      return this.extractBravoForUI(item);
-    });
-    return ret;
+    return pointsEntries.map(item => this.extractBravoForUI(item));
   }
 
   private extractBravoForUI(item) {
     return {
-      发出人: (item.fields['发出人(sheet)'] || []).map(c => this.volunteerMap[c].fields['Name']),
-      接收人: (item.fields['接收人(sheet)'] || []).map(c => this.volunteerMap[c].fields['Name']),
+      发出人: (item.fields['发出人(sheet)'] || []).map(c => {
+        return {
+          name: this.volunteerMap[c].fields['Name'],
+          id: this.volunteerMap[c].id
+        };
+      }),
+      接收人: (item.fields['接收人(sheet)'] || []).map(c => {
+        return {
+          name: this.volunteerMap[c].fields['Name'],
+          id: this.volunteerMap[c].id
+        };
+      }),
       分发原因: item.fields['分发原因'],
       时间日期: item.fields['时间日期'],
       类别: item.fields['类别'],
@@ -146,27 +153,7 @@ export class AirTableHandler {
                 - Date.parse(b.fields['时间日期']))
         .reverse();
 
-    let ret = pointsEntries.map(item => {
-      return {
-        发出人: (item.fields['发出人(sheet)'] || []).map(c => {
-          return {
-            name: this.volunteerMap[c].fields['Name'],
-            id: this.volunteerMap[c].id
-          };
-        }),
-        接收人: (item.fields['接收人(sheet)'] || []).map(c => {
-          return {
-            name: this.volunteerMap[c].fields['Name'],
-            id: this.volunteerMap[c].id
-          };
-        }),
-        分发原因: item.fields['分发原因'],
-        时间日期: item.fields['时间日期'],
-        类别: item.fields['类别'],
-        点数: item.fields['点数']
-      };
-    });
-    return ret;
+    return pointsEntries.map(item => this.extractBravoForUI(item));
   }
 
   private findTopTen():Array<any> {
