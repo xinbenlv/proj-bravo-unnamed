@@ -143,21 +143,23 @@ class AirTableHandler {
             }
         }));
         this.airTableRouter.post(`/ui/airtable/bravo/create`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            const bravo = {
-                "类别": "Peer Bonus",
-                "时间日期": "2018-09-13",
-                "分发原因": "test peer bonus TODO REMOVE this",
-                "点数": 200,
-                "发出人(sheet)": [
-                    "rec0dTfD6RUDPTfVt" // 周载南
-                ],
-                "接收人(sheet)": [
-                    "reckfSTrEoxQBRuZP",
-                ]
-            };
+            const bravo = ctx.request.body;
+            // {
+            //   "类别": "Peer Bonus",
+            //   "时间日期": "2018-09-13", // TODO (update with today)
+            //   "分发原因": "test peer bonus TODO REMOVE this",
+            //   "点数": 200,
+            //   "发出人(sheet)": [
+            //     "rec0dTfD6RUDPTfVt" // 周载南
+            //   ],
+            //   "接收人(sheet)": [
+            //     "reckfSTrEoxQBRuZP", // 李璐
+            //   ]
+            // };
             console.log(`Start creating bravo:`, bravo);
             yield this.createBravo(bravo);
             console.log(`Finished creating bravo:`, bravo);
+            ctx.body = `OK`;
         }));
         this.airTableRouter.get(`/ui/airtable/top10`, (ctx) => __awaiter(this, void 0, void 0, function* () {
             if (!this.isInit)
