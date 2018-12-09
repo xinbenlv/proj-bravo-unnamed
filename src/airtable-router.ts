@@ -79,7 +79,7 @@ export class AirTableHandler {
       }
     });
 
-      this.airTableRouter.post(`/ui/airtable/bravo/create`, async ctx => {
+    this.airTableRouter.post(`/airtable/bravo/create`, async ctx => {
       const bravo = ctx.request.body;
       // {
       //   "类别": "Peer Bonus",
@@ -97,6 +97,12 @@ export class AirTableHandler {
       await this.createBravo(bravo);
       console.log(`Finished creating bravo:`, bravo);
       ctx.body = `OK`;
+    });
+
+    this.airTableRouter.get(`/ui/airtable/bravo/create`, async ctx => {
+      await ctx.render('mvp/create-bravo', {
+
+      });
     });
 
 

@@ -142,7 +142,7 @@ class AirTableHandler {
                 ctx.body = "啥也没有找到";
             }
         }));
-        this.airTableRouter.post(`/ui/airtable/bravo/create`, (ctx) => __awaiter(this, void 0, void 0, function* () {
+        this.airTableRouter.post(`/airtable/bravo/create`, (ctx) => __awaiter(this, void 0, void 0, function* () {
             const bravo = ctx.request.body;
             // {
             //   "类别": "Peer Bonus",
@@ -160,6 +160,9 @@ class AirTableHandler {
             yield this.createBravo(bravo);
             console.log(`Finished creating bravo:`, bravo);
             ctx.body = `OK`;
+        }));
+        this.airTableRouter.get(`/ui/airtable/bravo/create`, (ctx) => __awaiter(this, void 0, void 0, function* () {
+            yield ctx.render('mvp/create-bravo', {});
         }));
         this.airTableRouter.get(`/ui/airtable/top10`, (ctx) => __awaiter(this, void 0, void 0, function* () {
             if (!this.isInit)
