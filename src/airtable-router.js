@@ -12,43 +12,52 @@ const Router = require("koa-router");
 const Airtable = require('airtable');
 console.assert(process.env.AIRTABLE_KEY, 'need to define export AIRTABLE_KEY= <key>');
 const base = new Airtable({ apiKey: process.env.AIRTABLE_KEY }).base('appHfV3iolIVA2fq4');
+const CACHE_LIFETIME_IN_SECONDS = 120; // 2min
+const date_fns_1 = require("date-fns");
 class AirTableHandler {
     constructor() {
-        this.isInit = false;
         this.volunteerMap = {};
         this.volPointsMap = {};
         this.cacheExpiredAt = null;
-        this.loadZGZG = function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                this.benefitPointsEntries = yield this.loadTableFunc('福利点数');
-                this.volListEntries = yield this.loadTableFunc('志愿者名单');
-                for (const v of this.volListEntries) {
-                    this.volunteerMap[v.id] = v;
-                    this.volPointsMap[v.id] = 0;
-                }
-                for (const b of this.benefitPointsEntries) {
-                    let points = b.fields["点数"];
-                    let vols = b.fields['接收人(sheet)'];
-                    if (vols && points)
-                        for (const v of vols) {
-                            this.volPointsMap[v] = this.volPointsMap[v] + points;
-                            if (v == 'recK0iofjPvcDa75u')
-                                console.log(v, points);
-                        }
-                    else {
-                        console.log(`Warning, '接收人(sheet)' does not exist for b`, b.id, " or 点数 doesn't exist");
+        this.maybeLoadZGZG = () => __awaiter(this, void 0, void 0, function* () {
+            let now = new Date();
+            console.log(`XXXX maybeLoadZGZG`);
+            console.log(`XXXX maybeLoadZGZG cacheExpiredAt=${this.cacheExpiredAt}, now = ${now}, isBefore=${date_fns_1.isBefore(now, this.cacheExpiredAt)}`);
+            if (this.cacheExpiredAt != null && date_fns_1.isBefore(now, this.cacheExpiredAt)) {
+                console.log(`Cache still valid`);
+            }
+            else {
+                console.log(`Cache expired, loading!`);
+                yield this.loadZGZG();
+                this.cacheExpiredAt = date_fns_1.addSeconds(now, CACHE_LIFETIME_IN_SECONDS);
+            }
+        });
+        this.loadZGZG = () => __awaiter(this, void 0, void 0, function* () {
+            this.benefitPointsEntries = yield this.loadTableFunc('福利点数');
+            this.volListEntries = yield this.loadTableFunc('志愿者名单');
+            for (const v of this.volListEntries) {
+                this.volunteerMap[v.id] = v;
+                this.volPointsMap[v.id] = 0;
+            }
+            for (const b of this.benefitPointsEntries) {
+                let points = b.fields["点数"];
+                let vols = b.fields['接收人(sheet)'];
+                if (vols && points)
+                    for (const v of vols) {
+                        this.volPointsMap[v] = this.volPointsMap[v] + points;
                     }
-                    vols = null;
+                else {
+                    console.log(`Warning, '接收人(sheet)' does not exist for b`, b.id, " or 点数 doesn't exist");
                 }
-                for (const volId in this.volPointsMap) {
-                    let points = this.volPointsMap[volId];
-                    let name = this.volunteerMap[volId].fields['Name'];
-                    console.log(volId, name, points);
-                }
-                this.isInit = true;
-                console.log(`Done init airtable`);
-            });
-        };
+                vols = null;
+            }
+            for (const volId in this.volPointsMap) {
+                let points = this.volPointsMap[volId];
+                let name = this.volunteerMap[volId].fields['Name'];
+                // console.log(volId, name, points);
+            }
+            console.log(`Done init airtable`);
+        });
         this.loadTableFunc = function (tableName) {
             return __awaiter(this, void 0, void 0, function* () {
                 return new Promise((resolve, reject) => {
@@ -75,8 +84,7 @@ class AirTableHandler {
         };
         this.airTableRouter = new Router();
         this.airTableRouter.get(`/airtable/points/all`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            if (!this.isInit)
-                yield this.loadZGZG();
+            yield this.maybeLoadZGZG();
             let ret = [];
             for (const volId in this.volPointsMap) {
                 let points = this.volPointsMap[volId];
@@ -91,8 +99,7 @@ class AirTableHandler {
             ctx.body = ret;
         }));
         this.airTableRouter.get(`/airtable/points/:id`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            if (!this.isInit)
-                yield this.loadZGZG();
+            yield this.maybeLoadZGZG();
             let volId = ctx.params.id;
             ctx.body = [
                 {
@@ -102,23 +109,20 @@ class AirTableHandler {
             ];
         }));
         this.airTableRouter.get(`/airtable/find/:searchRegEx`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            if (!this.isInit)
-                yield this.loadZGZG();
+            yield this.maybeLoadZGZG();
             let searchRegEx = ctx.params.searchRegEx;
             let ret = this.findUser(searchRegEx);
             ctx.body = ret;
         }));
         this.airTableRouter.get(`/ui/airtable/find/:searchRegEx`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            if (!this.isInit)
-                yield this.loadZGZG();
+            yield this.maybeLoadZGZG();
             let searchRegEx = ctx.params.searchRegEx;
             let users = this.findUser(searchRegEx);
             console.log(`Rendering user`, users);
             yield ctx.render('mvp/users', { users: users });
         }));
         this.airTableRouter.get(`/ui/airtable/points/:id`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            if (!this.isInit)
-                yield this.loadZGZG();
+            yield this.maybeLoadZGZG();
             let volId = ctx.params.id;
             if (this.volunteerMap[volId] && this.volPointsMap[volId]) {
                 let user = {
@@ -162,49 +166,44 @@ class AirTableHandler {
             ctx.body = `OK`;
         }));
         this.airTableRouter.get(`/ui/airtable/bravo/create`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            if (!this.isInit)
-                yield this.loadZGZG();
+            yield this.maybeLoadZGZG();
             let ret = [];
             for (let vol of this.volListEntries) {
                 ret.push({
                     id: vol.id,
                     displayName: vol.fields.DisplayName
                 });
-                console.log(`vol.fields.DisplayName`, vol.fields.DisplayName);
+                // console.log(`vol.fields.DisplayName`, vol.fields.DisplayName);
             }
-            console.log(`ret`, ret);
+            // console.log(`ret`, ret);
             yield ctx.render('mvp/create-bravo', {
                 users: ret
             });
         }));
         this.airTableRouter.get(`/ui/airtable/top10`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            if (!this.isInit)
-                yield this.loadZGZG();
+            console.log(`XXXX /ui/airtable/top10`);
+            yield this.maybeLoadZGZG();
             let users = this.findTopTen();
-            console.log(`Top 10`, users);
+            // console.log(`Top 10`, users);
             yield ctx.render('mvp/users', { title: `Top 10`, users: this.findTopTen() });
         }));
         this.airTableRouter.get(`/ui/airtable/bravos/all`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            if (!this.isInit)
-                yield this.loadZGZG();
+            yield this.maybeLoadZGZG();
             let bravos = this.getBravosAll();
             yield ctx.render('mvp/bravos', { bravos: bravos });
         }));
         this.airTableRouter.get(`/airtable/bravos/all`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            if (!this.isInit)
-                yield this.loadZGZG();
+            yield this.maybeLoadZGZG();
             let bravos = this.getBravosAll();
             ctx.body = bravos;
         }));
         this.airTableRouter.get(`/airtable/bonuses`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            if (!this.isInit)
-                yield this.loadZGZG();
+            yield this.maybeLoadZGZG();
             let bravos = this.getBonuses().slice(0, 10);
             ctx.body = bravos;
         }));
         this.airTableRouter.get(`/ui/airtable/bonuses`, (ctx) => __awaiter(this, void 0, void 0, function* () {
-            if (!this.isInit)
-                yield this.loadZGZG();
+            yield this.maybeLoadZGZG();
             let bravos = this.getBonuses().slice(0, 10);
             yield ctx.render('mvp/bravos', { bravos: bravos });
         }));
@@ -218,13 +217,13 @@ class AirTableHandler {
     }
     extractBravoForUI(item) {
         return {
-            发出人: (item.fields['发出人(sheet)'] || []).map(c => {
+            发出人: (item.fields["发出人(sheet)"] || []).map(c => {
                 return {
                     name: this.volunteerMap[c].fields['Name'],
                     id: this.volunteerMap[c].id
                 };
             }),
-            接收人: (item.fields['接收人(sheet)'] || []).map(c => {
+            接收人: (item.fields["接收人(sheet)"] || []).map(c => {
                 return {
                     name: this.volunteerMap[c].fields['Name'],
                     id: this.volunteerMap[c].id
@@ -251,7 +250,7 @@ class AirTableHandler {
             let name = this.volunteerMap[volId].fields['Name'];
             ret.push({ id: volId, name: name, points: points });
         }
-        console.log(`original 10`, ret);
+        // console.log(`original 10`, ret);
         ret.sort((a, b) => { return a.points - b.points; }).reverse();
         return ret.slice(0, 10);
     }
