@@ -1,23 +1,30 @@
-
+<link rel="stylesheet" href="/mvp/users.css">
 <%if (users.length > 0) { %>
-    <%if (typeof title !== 'undefined') { %>
-        <h1><%= title %></h1>
-    <% } %>
-    <table class="table">
-        <thead>
-        <th>姓名</th>
-        <th>点数</th>
-        </thead>
-        <tbody>
 
-        <% users.forEach(function (user) {%>
-            <tr>
-                <td><a href="/ui/airtable/points/<%= user.id %>"><%= user.name %></a></td>
-                <td><%= user.points %></td>
-            </tr>
-        <% })%>
-        </tbody>
-    </table>
+    <!-- UI example: https://dribbble.com/shots/2436821-Shot-088-Leaderboard -->
+    <div class="card">
+        <!--<%if (typeof title !== 'undefined') { %>-->
+
+        <!--<h1><%= title %></h1>-->
+        <!--<% } %>-->
+
+        <div class="card-body">
+            <table class="table user-table mb-0">
+                <tbody>
+
+                <% users.forEach(function (user, i) {%>
+                <tr class="">
+                    <td class="text-right align-middle"><%= i %> </td>
+                    <td class="text-justify align-middle">
+                        <!--<img class="rounded-circle" style="width:35px;" src="//ui-avatars.com/api/?name=<%= user.name %>&background=0D8ABC&color=fff" alt=""></td>-->
+                    <td class="text-left align-middle"><a href="/ui/airtable/points/<%= user.id %>"><%= user.name %></a></td>
+                    <td class="text-right align-middle"><%= user.points %></td>
+                </tr>
+                <% })%>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 <% } %>
 <%if (users.length == 0) { %>

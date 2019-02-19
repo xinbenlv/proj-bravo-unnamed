@@ -3,7 +3,7 @@ const Router = require("koa-router");
 const Airtable = require('airtable');
 console.assert(process.env.AIRTABLE_KEY, 'need to define export AIRTABLE_KEY= <key>');
 const base = new Airtable({apiKey: process.env.AIRTABLE_KEY}).base('appHfV3iolIVA2fq4');
-const CACHE_LIFETIME_IN_SECONDS = 120; // 2min
+const CACHE_LIFETIME_IN_SECONDS = 120000; // 2min
 import {addSeconds, isBefore} from "date-fns";
 
 export class AirTableHandler {
@@ -203,7 +203,7 @@ export class AirTableHandler {
 
     // console.log(`original 10`, ret);
     ret.sort((a,b) => {return a.points - b.points}).reverse();
-    return ret.slice(0,10);
+    return ret.slice(0,80);
   }
 
   private findUser(searchRegEx:string) {

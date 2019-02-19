@@ -1,0 +1,9 @@
+.user-table {
+    font-size: 20px;
+    line-height: 20px;
+    color: #999;
+}
+
+.user-table td, .user-table th {
+    border: none;
+}
