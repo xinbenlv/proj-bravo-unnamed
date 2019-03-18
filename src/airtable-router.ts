@@ -149,7 +149,7 @@ export class AirTableHandler {
     });
 
   }
-  private getBravosAll() {
+  public getBravosAll() {
     let pointsEntries = this.benefitPointsEntries
         .sort(
             (a, b) =>

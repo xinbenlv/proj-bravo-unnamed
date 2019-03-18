@@ -22,7 +22,7 @@ export class ModelV2 {
     return pointsEntries.map(item => this.extractBravoForUI(item));
   }
 
-  private extractBravoForUI(item) {
+  public extractBravoForUI(item) {
     return {
       发出人: (item.fields["发出人(sheet)"] || []).map(c => {
         return {

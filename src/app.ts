@@ -1,6 +1,6 @@
+require('dotenv').config();
 import {AirTableHandler} from "./airtable-router";
 import {RouterV2} from "./router-v2";
-require('dotenv').config();
 const Koa = require('koa');
 const Router = require("koa-router");
 const app = new Koa();

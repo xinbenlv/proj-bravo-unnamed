@@ -6,13 +6,6 @@
     <table class="table align-items-center table-flush">
       <thead class="thead-light">
       <tr class="d-flex">
-        <!--<th scope="col">Project</th>-->
-        <!--<th scope="col">Budget</th>-->
-        <!--<th scope="col">Status</th>-->
-        <!--<th scope="col">Users</th>-->
-        <!--<th scope="col">Completion</th>-->
-        <!--<th scope="col"></th>-->
-
         <th scope="col" class="col-1">发出人</th>
         <th scope="col" class="col-2">接收人</th>
         <th scope="col" class="col-8">感谢理由</th>
@@ -25,39 +18,32 @@
         <tr class="d-flex">
           <td class="col-1">
             <div class="avatar-group">
-              <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="Ryan Tompson">
-                <img alt="Image placeholder" src="/assets/img/theme/team-1-800x800.jpg" class="rounded-circle">
+              <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="<%= bravo["发出人"][0].name %>">
+                <img alt="Image placeholder for <%= bravo["发出人"][0].name %>" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=<%= bravo["发出人"][0].name[0] %>" class="rounded-circle">
               </a>
             </div>
           </td>
           <td class="col-2">
             <div class="avatar-group">
-              <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="Ryan Tompson">
-                <img alt="Image placeholder" src="/assets/img/theme/team-1-800x800.jpg" class="rounded-circle">
-              </a>
-              <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="Romina Hadid">
-                <img alt="Image placeholder" src="/assets/img/theme/team-2-800x800.jpg" class="rounded-circle">
-              </a>
-              <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="Alexander Smith">
-                <img alt="Image placeholder" src="/assets/img/theme/team-3-800x800.jpg" class="rounded-circle">
-              </a>
-              <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="Jessica Doe">
-                <img alt="Image placeholder" src="/assets/img/theme/team-4-800x800.jpg" class="rounded-circle">
-              </a>
+              <% bravo["接收人"].forEach(function(receiver) {%>
+                <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="<%= receiver.name %>">
+                  <img alt="Image placeholder for <%= receiver.name %>" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=<%= receiver.name[0] %>" class="rounded-circle">
+                </a>
+              <% })%>
             </div>
           </td>
           <th scope="row" class="col-8">
             <div class="media align-items-center">
-              <a href="#" class="avatar rounded-circle mr-3">
-                <img alt="Image placeholder" src="/assets/img/theme/bootstrap.jpg">
-              </a>
-              <div class="media-body">
-                <span class="mb-0 text-sm"><%= bravo['reason'] || '尚待补充' %></span>
+              <div class="zg-icon icon-shape bg-warning text-white rounded-circle shadow">
+                <i class="fas <%= bravo["点数"] > 300 ? "fa-trophy":  "fa-thumbs-up" %>"></i>
+              </div>
+              <div class="ml-2 media-body">
+                <span class="mb-0 text-sm"><%= bravo['分发原因'] || '尚待补充' %></span>
               </div>
             </div>
           </th>
           <td class="text-left col-2">
-            <%= bravo['timestamp']%>
+            <%= bravo['时间日期']%>
           </td>
         </tr>
       <% })%>
