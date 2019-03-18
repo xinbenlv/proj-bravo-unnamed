@@ -13,13 +13,7 @@ const serve = require('koa-static');
 const mount = require('koa-mount');
 const render = require('koa-ejs');
 const path = require('path');
-render(app, {
-  root: path.join(__dirname, 'client'),
-  layout: 'mvp/template',
-  viewExt: 'html',
-  cache: true,
-  debug: false
-});
+
 render(app, {
   root: path.join(__dirname, 'client-v2'),
   layout: 'layout',
