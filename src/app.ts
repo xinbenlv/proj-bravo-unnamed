@@ -1,20 +1,24 @@
 import {AirTableHandler} from "./airtable-router";
-
+import {RouterV2} from "./router-v2";
+require('dotenv').config();
 const Koa = require('koa');
 const Router = require("koa-router");
 const app = new Koa();
 const apiRouter = new Router();
 const airTableHandler = new AirTableHandler();
+const routerV2 = new RouterV2();
+
 const bodyParser = require('koa-bodyparser');
 const serve = require('koa-static');
+const mount = require('koa-mount');
 const render = require('koa-ejs');
 const path = require('path');
 render(app, {
-  root: path.join(__dirname, 'client'),
-  layout: 'mvp/template',
-  viewExt: 'html',
-  cache: false,
-  debug: true
+  root: path.join(__dirname, 'client-v2'),
+  layout: 'layout',
+  viewExt: 'ejs',
+  cache: true,
+  debug: false
 });
 
 const log4js = require('log4js');
@@ -137,10 +141,11 @@ apiRouter.post(`/bravo/like/:id`, async ctx => {
 
 
 app.use(bodyParser());
-app.use(serve('./src/client'));
 app.use(apiRouter.routes()).use(apiRouter.allowedMethods());
 app.use(airTableHandler.airTableRouter.routes()).use(airTableHandler.airTableRouter.allowedMethods());
 
+app.use(routerV2.uiRouter.routes()).use(routerV2.uiRouter.allowedMethods());
+app.use(mount('/assets/', serve('./public')));
 let port = process.env.PORT || 8000;
 app.listen(port);
 logger.info(`Started app at port ${port}`);
