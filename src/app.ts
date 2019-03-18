@@ -14,6 +14,13 @@ const mount = require('koa-mount');
 const render = require('koa-ejs');
 const path = require('path');
 render(app, {
+  root: path.join(__dirname, 'client'),
+  layout: 'mvp/template',
+  viewExt: 'html',
+  cache: true,
+  debug: false
+});
+render(app, {
   root: path.join(__dirname, 'client-v2'),
   layout: 'layout',
   viewExt: 'ejs',
@@ -143,7 +150,6 @@ apiRouter.post(`/bravo/like/:id`, async ctx => {
 app.use(bodyParser());
 app.use(apiRouter.routes()).use(apiRouter.allowedMethods());
 app.use(airTableHandler.airTableRouter.routes()).use(airTableHandler.airTableRouter.allowedMethods());
-
 app.use(routerV2.uiRouter.routes()).use(routerV2.uiRouter.allowedMethods());
 app.use(mount('/assets/', serve('./public')));
 let port = process.env.PORT || 8000;
