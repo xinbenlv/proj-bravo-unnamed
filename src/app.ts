@@ -10,6 +10,7 @@ const main = async function () {
   const apiRouter = new Router();
   const airTableHandler = new AirTableHandler();
   const routerV2 = new RouterV2();
+  const MongoClient = require('mongodb').MongoClient;
 
   const bodyParser = require('koa-bodyparser');
   const serve = require('koa-static');
@@ -125,22 +126,73 @@ const main = async function () {
   });
 
 
-// TODO(zzn): Api to receive BRAVO
+  // TODO(zzn): Api to receive BRAVO
+
+  let mongoDb = (await MongoClient.connect(process.env.MONGODB_URI)).db(process.env.MONGODB_DB);
+  const tokenizer = require('string-tokenizer');
   apiRouter.post(`/api/bravobot`, async ctx => {
     // https://api.slack.com/slash-commands
     console.log(ctx.request.body);
+
+
+    var tokens =
+        tokenizer()
+            .input(ctx.request.body.text)
+            .token('users', /@([\w.]{2,22})\W/)
+            .token('reason', /for (.+)/)
+            .resolve();
+    let from = ctx.request.body.user_name;
+    let to = tokens.users;
+    let reason = tokens.reason;
+    let now = new Date();
+
+    console.log(`tokens`, tokens);
+
+    await mongoDb.collection(`Bravos`).insertOne({
+      timestamp: now,
+      from: from,
+      from_id_type: `slack_user_name`,
+      to: to,
+      to_id_type: `slack_user_name`,
+      reason: reason,
+      raw: ctx.request.body,
+      raw_data_type: `slack_slash_command`
+    });
+
     ctx.body = {
       "response_type": "in_channel",
-      "text": `用户 @${ctx.request.body.user_name} 在 载歌在谷感谢墙 写下：`,
+      "text": `用户 @${from} 在 载歌在谷感谢墙 写下：`,
       "attachments": [
         {
           "color": "#2eb886",
           "title": "载歌在谷感谢墙",
           "title_link": "https://thx.zgzggala.org/v2",
+          "fields": [
+            {
+              "title": "来自",
+              "value": from,
+              "short": true
+            },
+            {
+              "title": "发给",
+              "value": to.join(`, `),
+              "short": true
+            },
+            {
+              "title": "理由",
+              "value": reason,
+              "short": false
+            }
+          ],
           "text": "感谢 " + ctx.request.body.text,
-          // "footer": "查看之前的感谢",
-          // "footer_icon": "https://thx.zgzggala.org/v2",
-          "ts": 123456789
+          "actions": [
+            {
+              "type": "button",
+              "text": "查看之前的感谢",
+              "url": "https://thx.zgzggala.org/v2"
+            }
+          ],
+          "ts": Math.floor(now.getTime()/1000)
         }
       ]
     };
