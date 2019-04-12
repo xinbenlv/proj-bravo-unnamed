@@ -1,3 +1,5 @@
+import {MongoClient} from "mongodb";
+
 const Airtable = require('airtable');
 console.assert(process.env.AIRTABLE_KEY, 'need to define export AIRTABLE_KEY= <key>');
 const base = new Airtable({apiKey: process.env.AIRTABLE_KEY}).base(process.env.AIRTABLE_BASE);
@@ -5,11 +7,16 @@ const CACHE_LIFETIME_IN_SECONDS = 120000; // 2min
 import {addSeconds, isBefore} from "date-fns";
 
 export class ModelV2 {
+  public mongoDb;
+  public async init() {
+    this.mongoDb = (await MongoClient.connect(process.env.MONGODB_URI)).db(process.env.MONGODB_DB);
+  }
   private benefitPointsEntries:Array<any>; // = await this.loadTableFunc('福利点数');
   private volListEntries:Array<any>; // = await this.loadTableFunc('志愿者名单');
   private volunteerMap = {};
   private volPointsMap = {};
   private cacheExpiredAt:Date = null;
+
   public async getBravosAll() {
     await this.maybeLoadZGZG();
     let pointsEntries = this.benefitPointsEntries

@@ -204,13 +204,13 @@ const main = async function () {
     ctx.app.db.bravo[bravo.id] = bravo; // Adding the new bravo
   });
 
-// TODO(zzn): Me Too!
+  // TODO(zzn): Me Too!
   apiRouter.post(`/bravo/meToo/:id`, async ctx => {
     let bravo = ctx.app.db.bravo[ctx.request.params.id];
     bravo.receivers.add(ctx.app.meId);
   });
 
-// TODO(zzn): Like -> Trigger Approval and
+  // TODO(zzn): Like -> Trigger Approval and
   apiRouter.post(`/bravo/like/:id`, async ctx => {
     let bravo = ctx.app.db.bravo[ctx.request.params.id];
     bravo.likers.add(ctx.app.meId);

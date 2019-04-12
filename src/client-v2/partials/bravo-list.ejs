@@ -6,9 +6,9 @@
     <table class="table align-items-center table-flush">
       <thead class="thead-light">
       <tr class="d-flex">
-        <th scope="col" class="col-1">发出人</th>
+        <th scope="col" class="col-2">发出人</th>
         <th scope="col" class="col-2">接收人</th>
-        <th scope="col" class="col-8">感谢理由</th>
+        <th scope="col" class="col-6">感谢理由</th>
         <th scope="col" class="col-2" >时间日期</th>
       </tr>
       </thead>
@@ -18,16 +18,16 @@
         <tr class="d-flex shadow--hover">
           <td class="col-2">
             <div class="avatar-group">
-              <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="<%= bravo["发出人"][0].name %>">
-                <img alt="Image placeholder for <%= bravo["发出人"][0].name %>" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=<%= bravo["发出人"][0].name[0] %>" class="rounded-circle">
+              <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="<%= bravo.from %>">
+                <img alt="Image placeholder for <%= bravo.from%>" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=<%= bravo.from[0] %>" class="rounded-circle">
               </a>
             </div>
           </td>
           <td class="col-2">
             <div class="avatar-group">
-              <% bravo["接收人"].forEach(function(receiver) {%>
-                <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="<%= receiver.name %>">
-                  <img alt="Image placeholder for <%= receiver.name %>" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=<%= receiver.name[0] %>" class="rounded-circle">
+              <% bravo.to.forEach(function(receiver) {%>
+                <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="<%= receiver %>">
+                  <img alt="Image placeholder for <%= receiver %>" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=<%= receiver[0] %>" class="rounded-circle">
                 </a>
               <% })%>
             </div>
@@ -35,15 +35,15 @@
           <th class="col-6">
             <div class="media align-items-center">
               <div class="zg-icon icon-shape bg-warning text-white rounded-circle shadow">
-                <i class="fas <%= bravo["点数"] > 300 ? "fa-trophy":  "fa-thumbs-up" %>"></i>
+                <i class="fas fa-thumbs-up"></i>
               </div>
               <div class="ml-2 media-body">
-                <span class="mb-0 text-sm"><%= bravo['分发原因'] || '尚待补充' %></span>
+                <span class="mb-0 text-sm"><%= bravo.reason || '尚待补充' %></span>
               </div>
             </div>
           </th>
           <td class="text-left col-2">
-            <%= bravo['时间日期']%>
+            <%= bravo.timestamp_str %>
           </td>
         </tr>
       <% })%>
