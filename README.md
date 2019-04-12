@@ -58,3 +58,21 @@ Method: `addTransaction(sender, receiver, note)`
  - `nominationId` - only one required
  
  
+#### Slack
+
+```json5
+{ 
+    token: 'hpAvDVwBoIdgScuBgx19eLWh',
+    team_id: 'T07DT2QMB',
+    team_domain: 'haoshiyou',
+    channel_id: 'D1KEW8PAR',
+    channel_name: 'directmessage',
+    user_id: 'U07DSL5T4',
+    user_name: 'xinbenlv',
+    command: '/thank',
+    text: '@kis87988 for doing good',
+    response_url: 'https://hooks.slack.com/commands/T07DT2QMB/600833755201/rRTxE5IWdu3yolerRNunoY1i',
+}
+
+``` 
+ 
