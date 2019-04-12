@@ -131,7 +131,7 @@ apiRouter.post(`/api/bravobot`, async ctx => {
     "text": "BravoBot乖乖的记下了(其实还没有，关注 http://zgzg.link/proj-bravo-code )：",
     "attachments": [
       {
-        "text":"Partly cloudy today and tomorrow"
+        "text": ctx.request.body.text
       }
     ]
   };
