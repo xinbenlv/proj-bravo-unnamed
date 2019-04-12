@@ -122,6 +122,21 @@ dataTypes.forEach(d => {
   });
 });
 
+
+// TODO(zzn): Api to receive BRAVO
+apiRouter.post(`/api/bravobot`, async ctx => {
+  // https://api.slack.com/slash-commands
+  console.log(ctx.req);
+  ctx.body = {
+    "text": "BravoBot乖乖的记下了(其实还没有，关注 http://zgzg.link/proj-bravo-code )：",
+    "attachments": [
+      {
+        "text":"Partly cloudy today and tomorrow"
+      }
+    ]
+  };
+});
+
 // TODO(zzn): Method Create Bravo
 apiRouter.post(`/bravo/create`, async ctx => {
   let bravo = ctx.request.body; // TODO(zzn): validate.
