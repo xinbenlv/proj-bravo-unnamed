@@ -15,8 +15,8 @@
       <tbody>
 
       <% bravos.forEach(function (bravo) {%>
-        <tr class="d-flex">
-          <td class="col-1">
+        <tr class="d-flex shadow--hover">
+          <td class="col-2">
             <div class="avatar-group">
               <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="<%= bravo["发出人"][0].name %>">
                 <img alt="Image placeholder for <%= bravo["发出人"][0].name %>" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=<%= bravo["发出人"][0].name[0] %>" class="rounded-circle">
@@ -32,7 +32,7 @@
               <% })%>
             </div>
           </td>
-          <th scope="row" class="col-8">
+          <th class="col-6">
             <div class="media align-items-center">
               <div class="zg-icon icon-shape bg-warning text-white rounded-circle shadow">
                 <i class="fas <%= bravo["点数"] > 300 ? "fa-trophy":  "fa-thumbs-up" %>"></i>

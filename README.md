@@ -10,10 +10,13 @@ Using the AirTable as backend to build the zgThx
   - is it needed? or Heroku will help us do that?
   - yes, it is needed
 - [X] show points of top 10 point-leader
-- [ ] submit in peer bonus
+- [X] submit in peer bonus
 - [X] show latest peer bonus
 
 ## Version 2 (next)
+- Data in Database
+- Support API sending points and receiving points
+
 
 ### User Journey
 1. Create an activity (meeting, event, worktask, etc)
