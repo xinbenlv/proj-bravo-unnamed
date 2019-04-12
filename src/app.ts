@@ -13,7 +13,6 @@ const serve = require('koa-static');
 const mount = require('koa-mount');
 const render = require('koa-ejs');
 const path = require('path');
-
 render(app, {
   root: path.join(__dirname, 'client-v2'),
   layout: 'layout',
@@ -129,10 +128,16 @@ apiRouter.post(`/api/bravobot`, async ctx => {
   console.log(ctx.request.body);
   ctx.body = {
     "response_type": "in_channel",
-    "text": "BravoBot乖乖的记下了. (其实还没有，关注 http://zgzg.link/proj-bravo-code )：",
+    "text": `用户 @${ctx.request.body.user_name} 在 载歌在谷感谢墙 写下：`,
     "attachments": [
       {
-        "text": ctx.request.body.text
+        "color": "#2eb886",
+        "title": "载歌在谷感谢墙",
+        "title_link": "https://thx.zgzggala.org/v2",
+        "text": "感谢 " + ctx.request.body.text,
+        // "footer": "查看之前的感谢",
+        // "footer_icon": "https://thx.zgzggala.org/v2",
+        "ts": 123456789
       }
     ]
   };
