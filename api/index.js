@@ -26,7 +26,6 @@ MongoClient.connect(process.env.MONGODB_URI)
     let mongoDb = mongoClient.db(process.env.MONGODB_DB);
     const tokenizer = require('string-tokenizer');
     router.post(`/bravobot/interact`, asyncHandler(async (req, res) => {
-      console.log(`1111`, req.body);
       let payload = req.body.payload;
       let data = JSON.parse(payload);
       logger.debug(`Received a request`, JSON.stringify(data, null, 2));
@@ -119,7 +118,7 @@ MongoClient.connect(process.env.MONGODB_URI)
           {
             "color": "#2eb886",
             "title": "载歌在谷感谢墙",
-            "title_link": "https://thx.zgzggala.org/v2?utm_source=slack_slash&utm_campaign=slack_slash_title",
+            "title_link": "https://thx.zgzggala.org/?utm_source=slack_slash&utm_campaign=slack_slash_title",
             "callback_id": `${bravo.ops[0]._id}`,
             "fields": [
               {
@@ -150,7 +149,7 @@ MongoClient.connect(process.env.MONGODB_URI)
               {
                 "type": "button",
                 "text": "查看更多",
-                "url": "https://thx.zgzggala.org/v2?utm_source=slack_slash&utm_campaign=slack_slash_view_more_button",
+                "url": "https://thx.zgzggala.org/?utm_source=slack_slash&utm_campaign=slack_slash_view_more_button",
                 "value": "view_more"
               },
               {
