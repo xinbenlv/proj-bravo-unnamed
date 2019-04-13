@@ -144,6 +144,13 @@ const main = async function () {
     let from = ctx.request.body.user_name;
     let to = Array.isArray(tokens.users) ? tokens.users : [tokens.users] ;
     let reason = tokens.reason;
+    if (!from || to.length == 0 || !reason) {
+      ctx.body = {
+        "text": "Format is incorrect. Example: /thank @xinbenlv for creating bravobot."
+      };
+
+      return;
+    }
     let now = new Date();
 
     console.log(`tokens`, tokens);
