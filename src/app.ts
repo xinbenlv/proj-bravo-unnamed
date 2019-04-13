@@ -194,7 +194,6 @@ const main = async function () {
       raw: ctx.request.body,
       raw_data_type: `slack_slash_command`
     });
-    logger.debug(`XXX bravo saved `, JSON.stringify(bravo, null, 2));
 
     ctx.body = {
       "response_type": "in_channel",
@@ -249,7 +248,6 @@ const main = async function () {
       ]
     };
 
-    console.log(`XXX respond with slash commands`, ctx.body);
   });
 
 // TODO(zzn): Method Create Bravo
@@ -272,7 +270,6 @@ const main = async function () {
 
   app.use(bodyParser());
   app.use(apiRouter.routes()).use(apiRouter.allowedMethods());
-  app.use(airTableHandler.airTableRouter.routes()).use(airTableHandler.airTableRouter.allowedMethods());
   app.use(routerV2.uiRouter.routes()).use(routerV2.uiRouter.allowedMethods());
   app.use(mount('/assets/', serve('./public')));
   let port = process.env.PORT || 8000;
