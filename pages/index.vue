@@ -20,10 +20,9 @@
         </form>
       </div>
     </nav>
-    <div class="container d-flex mt-4 mt-md-2">
-      <div class="col-2 h-100"></div>
-      <div class="d-flex flex-wrap col-8">
-        <div class="mb-3 col-12" v-for="bravo of bravos" v-bind:key="bravo._id">
+    <div class="container d-flex mt-4 mt-md-2 flex-sm-column flex-md-column">
+      <div class="d-flex flex-wrap w-100">
+        <div class="mb-3 w-100" v-for="bravo of bravos" v-bind:key="bravo._id">
           <div class="card shadow-sm">
             <div class="card-body">
               <div class="media">
@@ -40,7 +39,6 @@
           </div>
         </div>
       </div>
-      <div class="col-2 align-self-stretch" />
     </div>
   </section>
 </template>
@@ -53,14 +51,7 @@ export default {
         team_domain: "zaigezaigu",
         team_domain_name: "载歌在谷",
       },
-      bravos : [
-        {"_id":"5cb15cbf5d96468e04e8d663","timestamp":"2019-04-13T03:51:27.519Z","from":"xinbenlv","from_id_type":"slack_user_name","to":["peipei.wang","kis87988"],"to_id_type":"slack_user_name","reason":"developing #proj-bravo-unnamed","raw":{"token":"hpAvDVwBoIdgScuBgx19eLWh","team_id":"T07DT2QMB","team_domain":"haoshiyou","channel_id":"CHHQ536MR","channel_name":"noisy-dev","user_id":"U07DSL5T4","user_name":"xinbenlv","command":"/thank","text":"@peipei.wang and @kis87988 for developing #proj-bravo-unnamed","response_url":"https://hooks.slack.com/commands/T07DT2QMB/611191241750/bAY0qwLTdn7kbh5CtJ6sN74K","trigger_id":"607243872469.7469092725.77afec3da383b4a23e9fdba001f91229"},"raw_data_type":"slack_slash_command"},
-        {"_id":"5cb15cbf5d96468e04e8d664","timestamp":"2019-04-13T03:51:27.519Z","from":"xinbenlv","from_id_type":"slack_user_name","to":["peipei.wang","kis87988"],"to_id_type":"slack_user_name","reason":"developing #proj-bravo-unnamed","raw":{"token":"hpAvDVwBoIdgScuBgx19eLWh","team_id":"T07DT2QMB","team_domain":"haoshiyou","channel_id":"CHHQ536MR","channel_name":"noisy-dev","user_id":"U07DSL5T4","user_name":"xinbenlv","command":"/thank","text":"@peipei.wang and @kis87988 for developing #proj-bravo-unnamed","response_url":"https://hooks.slack.com/commands/T07DT2QMB/611191241750/bAY0qwLTdn7kbh5CtJ6sN74K","trigger_id":"607243872469.7469092725.77afec3da383b4a23e9fdba001f91229"},"raw_data_type":"slack_slash_command"},
-        {"_id":"5cb15cbf5d96468e04e8d665","timestamp":"2019-04-13T03:51:27.519Z","from":"xinbenlv","from_id_type":"slack_user_name","to":["peipei.wang","kis87988"],"to_id_type":"slack_user_name","reason":"developing #proj-bravo-unnamed","raw":{"token":"hpAvDVwBoIdgScuBgx19eLWh","team_id":"T07DT2QMB","team_domain":"haoshiyou","channel_id":"CHHQ536MR","channel_name":"noisy-dev","user_id":"U07DSL5T4","user_name":"xinbenlv","command":"/thank","text":"@peipei.wang and @kis87988 for developing #proj-bravo-unnamed","response_url":"https://hooks.slack.com/commands/T07DT2QMB/611191241750/bAY0qwLTdn7kbh5CtJ6sN74K","trigger_id":"607243872469.7469092725.77afec3da383b4a23e9fdba001f91229"},"raw_data_type":"slack_slash_command"},
-        {"_id":"5cb15cbf5d96468e04e8d666","timestamp":"2019-04-13T03:51:27.519Z","from":"xinbenlv","from_id_type":"slack_user_name","to":["peipei.wang","kis87988"],"to_id_type":"slack_user_name","reason":"developing #proj-bravo-unnamed","raw":{"token":"hpAvDVwBoIdgScuBgx19eLWh","team_id":"T07DT2QMB","team_domain":"haoshiyou","channel_id":"CHHQ536MR","channel_name":"noisy-dev","user_id":"U07DSL5T4","user_name":"xinbenlv","command":"/thank","text":"@peipei.wang and @kis87988 for developing #proj-bravo-unnamed","response_url":"https://hooks.slack.com/commands/T07DT2QMB/611191241750/bAY0qwLTdn7kbh5CtJ6sN74K","trigger_id":"607243872469.7469092725.77afec3da383b4a23e9fdba001f91229"},"raw_data_type":"slack_slash_command"},
-        {"_id":"5cb15cbf5d96468e04e8d667","timestamp":"2019-04-13T03:51:27.519Z","from":"xinbenlv","from_id_type":"slack_user_name","to":["peipei.wang","kis87988"],"to_id_type":"slack_user_name","reason":"developing #proj-bravo-unnamed","raw":{"token":"hpAvDVwBoIdgScuBgx19eLWh","team_id":"T07DT2QMB","team_domain":"haoshiyou","channel_id":"CHHQ536MR","channel_name":"noisy-dev","user_id":"U07DSL5T4","user_name":"xinbenlv","command":"/thank","text":"@peipei.wang and @kis87988 for developing #proj-bravo-unnamed","response_url":"https://hooks.slack.com/commands/T07DT2QMB/611191241750/bAY0qwLTdn7kbh5CtJ6sN74K","trigger_id":"607243872469.7469092725.77afec3da383b4a23e9fdba001f91229"},"raw_data_type":"slack_slash_command"},
-        {"_id":"5cb15cbf5d96468e04e8d668","timestamp":"2019-04-13T03:51:27.519Z","from":"xinbenlv","from_id_type":"slack_user_name","to":["peipei.wang","kis87988"],"to_id_type":"slack_user_name","reason":"developing #proj-bravo-unnamed","raw":{"token":"hpAvDVwBoIdgScuBgx19eLWh","team_id":"T07DT2QMB","team_domain":"haoshiyou","channel_id":"CHHQ536MR","channel_name":"noisy-dev","user_id":"U07DSL5T4","user_name":"xinbenlv","command":"/thank","text":"@peipei.wang and @kis87988 for developing #proj-bravo-unnamed","response_url":"https://hooks.slack.com/commands/T07DT2QMB/611191241750/bAY0qwLTdn7kbh5CtJ6sN74K","trigger_id":"607243872469.7469092725.77afec3da383b4a23e9fdba001f91229"},"raw_data_type":"slack_slash_command"},
-      ]
+      bravos : []
     }
   },
   async mounted() {

@@ -65,6 +65,7 @@ MongoClient.connect(process.env.MONGODB_URI)
       if (q['team_domain']) {
         filter['raw.team_domain'] = q['team_domain']
       }
+      console.log(filter);
       let ret = await mongoDb.collection(`Bravos`)
         .find(filter)
         .sort({timestamp: -1})
