@@ -142,7 +142,7 @@ const main = async function () {
             .token('reason', /for (.+)/)
             .resolve();
     let from = ctx.request.body.user_name;
-    let to = tokens.users;
+    let to = Array.isArray(tokens.users) ? tokens.users : [tokens.users] ;
     let reason = tokens.reason;
     let now = new Date();
 
