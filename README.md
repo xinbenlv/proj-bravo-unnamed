@@ -59,20 +59,6 @@ Method: `addTransaction(sender, receiver, note)`
  
  
 #### Slack
+Slack Bot
 
-```json5
-{ 
-    token: 'hpAvDVwBoIdgScuBgx19eLWh',
-    team_id: 'T07DT2QMB',
-    team_domain: 'haoshiyou',
-    channel_id: 'D1KEW8PAR',
-    channel_name: 'directmessage',
-    user_id: 'U07DSL5T4',
-    user_name: 'xinbenlv',
-    command: '/thank',
-    text: '@kis87988 for doing good',
-    response_url: 'https://hooks.slack.com/commands/T07DT2QMB/600833755201/rRTxE5IWdu3yolerRNunoY1i',
-}
-
-``` 
- 
+<a href="https://slack.com/oauth/authorize?client_id=7469092725.595551711459&scope=commands,bot,chat:write:bot,users:read,emoji:read,reactions:read,reactions:write"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
