@@ -23,14 +23,6 @@ const asyncHandler = fn => (req, res, next) =>
 
 MongoClient.connect(process.env.MONGODB_URI)
   .then((mongoClient) => {
-    router.get('/', (req, res, next) => {
-      res.send('API root')
-    });
-
-    router.post('/', (req, res, next) => {
-      res.send('API root post')
-    });
-
     let mongoDb = mongoClient.db(process.env.MONGODB_DB);
     const tokenizer = require('string-tokenizer');
     router.post(`/bravobot/interact`, asyncHandler(async (req, res) => {
@@ -66,6 +58,19 @@ MongoClient.connect(process.env.MONGODB_URI)
 
       res.send(retMessage);
 
+    }));
+
+    router.get(`/bravos/list`, asyncHandler(async (req, res) => {
+      let q = req.query;
+      let filter = {};
+      if (q['team_domain']) {
+        filter['raw.team_domain'] = q['team_domain']
+      }
+      let ret = await mongoDb.collection(`Bravos`)
+        .find(filter)
+        .sort({timestamp: -1})
+        .limit(20).toArray();
+      res.send(ret);
     }));
 
     router.post(`/bravobot/slash/thank`, asyncHandler(async (req, res) => {
@@ -159,8 +164,6 @@ MongoClient.connect(process.env.MONGODB_URI)
           }
         ]
       });
-
-
     }));
   }).catch(e=>logger.error(e));
 
