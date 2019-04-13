@@ -1,3 +1,5 @@
+import {ObjectId} from "bson";
+
 require('dotenv').config();
 import {AirTableHandler} from "./airtable-router";
 import {RouterV2} from "./router-v2";
@@ -130,11 +132,39 @@ const main = async function () {
 
   let mongoDb = (await MongoClient.connect(process.env.MONGODB_URI)).db(process.env.MONGODB_DB);
   const tokenizer = require('string-tokenizer');
-  apiRouter.post(`/api/bravobot`, async ctx => {
+  apiRouter.post(`/api/bravobot/interact`, async ctx => {
+    let payload = ctx.request.body.payload;
+    let data = JSON.parse(payload);
+    logger.debug(`Received a request`, JSON.stringify(data, null, 2));
+    let bravo = (await mongoDb.collection(`Bravos`).findOneAndUpdate(
+        {_id: new ObjectId(data.callback_id)},
+        {
+          // $push: {plus_one_raw_array: data},
+          $addToSet: {plus_one_set: data.user.name}
+        },
+        {
+          returnOriginal: false
+        }
+    ));
+
+    let retMessage = data.original_message;
+    if (data.actions.length == 1) {
+      if (data.actions[0].value == "plus_one") {
+        retMessage.attachments[0].actions[0].text = `+1 (${bravo.value.plus_one_set.length})`;
+      } else if (data.actions[0].value == "teach_me") {
+        retMessage.attachments[0].fields.push(          {
+          "title": "分发方法",
+          "type": "markdown",
+          "value": "`/thank [@user] for [reason].`",
+          "short": false
+        })
+      }
+    }
+    ctx.body = retMessage;
+  });
+  apiRouter.post(`/api/bravobot/slash/thank`, async ctx => {
     // https://api.slack.com/slash-commands
-    console.log(ctx.request.body);
-
-
+    logger.debug(`Received a request`, JSON.stringify(ctx.request.body, null, 2));
     var tokens =
         tokenizer()
             .input(ctx.request.body.text)
@@ -146,16 +176,15 @@ const main = async function () {
     let reason = tokens.reason;
     if (!from || to.length == 0 || !reason) {
       ctx.body = {
-        "text": "Format is incorrect. Example: /thank @xinbenlv for creating bravobot."
+        "text": "Format is incorrect. Example: /thank [@user] for [reason]"
       };
-
       return;
     }
     let now = new Date();
 
-    console.log(`tokens`, tokens);
+    logger.debug(`tokens`, tokens);
 
-    await mongoDb.collection(`Bravos`).insertOne({
+    let bravo = await mongoDb.collection(`Bravos`).insert({
       timestamp: now,
       from: from,
       from_id_type: `slack_user_name`,
@@ -165,15 +194,17 @@ const main = async function () {
       raw: ctx.request.body,
       raw_data_type: `slack_slash_command`
     });
+    logger.debug(`XXX bravo saved `, JSON.stringify(bravo, null, 2));
 
     ctx.body = {
       "response_type": "in_channel",
-      "text": `用户 @${from} 在 载歌在谷感谢墙 写下：`,
+      "text": `群友 @${from} 诚心诚意地 载歌在谷感谢墙 写下：`,
       "attachments": [
         {
           "color": "#2eb886",
           "title": "载歌在谷感谢墙",
-          "title_link": "https://thx.zgzggala.org/v2",
+          "title_link": "https://thx.zgzggala.org/v2?utm_source=slack_slash&utm_campaign=slack_slash_title",
+          "callback_id": `${bravo.ops[0]._id}`,
           "fields": [
             {
               "title": "来自",
@@ -194,15 +225,31 @@ const main = async function () {
           "text": "感谢 " + ctx.request.body.text,
           "actions": [
             {
+              "name": "plus_one",
+              "text": "+1",
+              "style": "primary",
               "type": "button",
-              "text": "查看之前的感谢",
-              "url": "https://thx.zgzggala.org/v2"
-            }
+              "value": "plus_one"
+            },
+            {
+              "type": "button",
+              "text": "查看更多",
+              "url": "https://thx.zgzggala.org/v2?utm_source=slack_slash&utm_campaign=slack_slash_view_more_button",
+              "value": "view_more"
+            },
+            {
+              "name": "teach_me",
+              "text": "我也来",
+              "type": "button",
+              "value": "teach_me"
+            },
           ],
-          "ts": Math.floor(now.getTime()/1000)
+          "ts": now.getTime()/1000.0
         }
       ]
     };
+
+    console.log(`XXX respond with slash commands`, ctx.body);
   });
 
 // TODO(zzn): Method Create Bravo
@@ -222,7 +269,6 @@ const main = async function () {
     let bravo = ctx.app.db.bravo[ctx.request.params.id];
     bravo.likers.add(ctx.app.meId);
   });
-
 
   app.use(bodyParser());
   app.use(apiRouter.routes()).use(apiRouter.allowedMethods());
