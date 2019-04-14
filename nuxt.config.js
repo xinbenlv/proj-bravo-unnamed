@@ -1,4 +1,5 @@
-const pkg = require('./package')
+const pkg = require('./package');
+require(`dotenv`).config();
 
 module.exports = {
   mode: 'universal',
@@ -49,6 +50,8 @@ module.exports = {
    ** Axios module configuration
    */
   axios: {
+    host: process.env.HOST,
+    port: process.env.PORT,
     // See https://github.com/nuxt-community/axios-module#options
   },
 
