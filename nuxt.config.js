@@ -50,8 +50,11 @@ module.exports = {
    ** Axios module configuration
    */
   axios: {
-    host: process.env.HOST,
-    port: process.env.PORT,
+    // host: process.env.HOST,
+    // port: process.env.PORT,
+    baseURL: "/",
+    debug: true
+    // proxy: true // Can be also an object with default options
     // See https://github.com/nuxt-community/axios-module#options
   },
 
@@ -81,5 +84,5 @@ module.exports = {
 
     // Will register file from project api directory to handle /api/* requires
     { path: '/api', handler: '@/api/index.js' }
-  ]
+  ],
 }
