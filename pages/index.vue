@@ -30,9 +30,13 @@
                 <div class="media-body">
                   <div class="text-left mb-2"><span class="bravo-receiver">{{ bravo.to.join(', ') }}</span> <span class="bravo-light-weight-text">receive bravo for</span></div>
                   <div class="text-left mb-2"><span class="bravo-reason">{{ bravo.reason }}</span></div>
-                  <div class="text-left mb-2"><div class=" bravo-medal mr-1 d-inline-block"></div><span class="bravo-light-weight-text">100 points</span></div>
+                  <!--<div class="text-left mb-2"><div class=" bravo-medal mr-1 d-inline-block"></div><span class="bravo-light-weight-text">100 points</span></div>-->
                   <div class="text-left mb-2"><span class="bravo-light-weight-text">from</span> <nuxt-link :to="`/user/${bravo.from}`" class="bravo-from-user">{{ bravo.from }}</nuxt-link></div>
-                  <div class="text-left"><span class="bravo-light-weight-text">3 hours ago</span></div>
+                  <div class="text-left">
+                    <span class="bravo-light-weight-text">
+                      {{ $dateFns.distanceInWords(new Date(), bravo.timestamp, {addSuffix: true})}}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -60,7 +64,7 @@ export default {
   methods: {
     fetch: async function(team_domain, since_ts_utc_ms) {
         // Need to get this fixed.
-        return await this.$axios.$get(`//thx.zgzggala.org/api/bravos/list?team_domain=${team_domain}&since_ts=${since_ts_utc_ms}`);
+        return await this.$axios.$get(`/api/bravos/list?team_domain=${team_domain}&since_ts=${since_ts_utc_ms}`);
     }
   }
 }
