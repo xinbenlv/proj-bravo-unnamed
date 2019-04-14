@@ -54,13 +54,14 @@ export default {
       bravos : []
     }
   },
-  async mounted() {
+  async created() {
     this.bravos = await this.fetch(this.workspace.team_domain, 0);
   },
   methods: {
     fetch: async function(team_domain, since_ts_utc_ms) {
-        return await this.$axios.$get(`/api/bravos/list?team_domain=${team_domain}&since_ts=${since_ts_utc_ms}`);
-      }
+        // Need to get this fixed.
+        return await this.$axios.$get(`http://thx.zgzggala.org/api/bravos/list?team_domain=${team_domain}&since_ts=${since_ts_utc_ms}`);
+    }
   }
 }
 </script>

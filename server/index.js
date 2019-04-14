@@ -12,6 +12,8 @@ async function start() {
   const nuxt = new Nuxt(config)
 
   const { host, port } = nuxt.options.server
+  // const host = process.env.SITE_HOST || `localhost`;
+  // const port = process.env.HOST || 3001;
 
   // Build only in dev mode
   if (config.dev) {
@@ -25,7 +27,7 @@ async function start() {
   app.use(nuxt.render)
 
   // Listen the server
-  app.listen(port, host)
+  app.listen(port, host);
   consola.ready({
     message: `Server listening on http://${host}:${port}`,
     badge: true
