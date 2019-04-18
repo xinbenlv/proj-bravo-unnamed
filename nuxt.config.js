@@ -2,6 +2,7 @@ const pkg = require('./package');
 require(`dotenv`).config();
 
 module.exports = {
+  debug: true,
   mode: 'universal',
 
   /*
