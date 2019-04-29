@@ -8,7 +8,7 @@ function top(allThx, toOrFrom) {
       let count = countMap[user] ? countMap[user] : 0;
       count++;
       countMap[user] = count;
-      let plusOneSize = plusOneCountMap[user]? plusOneCountMap[user]: 0;
+      let plusOneSize = plusOneCountMap[user] ? plusOneCountMap[user] : 0;
       plusOneSize += itemPlusOne;
       plusOneCountMap[user] = plusOneSize;
     });
@@ -30,6 +30,28 @@ function getMedal(i) {
     default: return `:clap:`;
   }
 }
+
+let countTopChannel = function(allThx) {
+  let bravoMap = {};
+  let plusOneMap = {};
+  allThx.forEach(item => {
+    let bravoCount = bravoMap[item.raw.channel_name] > 0 ? bravoMap[item.raw.channel_name] : 0;
+    let plusOneCount = plusOneMap[item.raw.channel_name] > 0 ? bravoMap[item.raw.channel_name] : 0;
+    let toSize = Array.isArray(item.to) ? item.to.length : 1;
+    let fromSize = Array.isArray(item.from) ? item.from.length : 1;
+    let plusOneSize = item.plus_one_set ? item.plus_one_set.length : 0;
+    bravoCount += toSize * fromSize;
+    plusOneCount += toSize * fromSize * plusOneSize;
+    bravoMap[item.raw.channel_name] = bravoCount;
+    plusOneMap[item.raw.channel_name] = plusOneCount;
+  });
+  return Object.keys(bravoMap)
+    .sort((a,b) => { return bravoMap[b] + plusOneMap[b] - bravoMap[a] - plusOneMap[a] })
+    //.slice(0, 5)
+    .map(key => {
+      return [key, bravoMap[key], plusOneMap[key]];
+    });
+};
 
 
 let notify = async () => {
@@ -58,6 +80,9 @@ let notify = async () => {
   let topFrom = top(allThx, `from`);
   let topToLast7Day = top(last7DaysThx, `to`);
   let topFromLast7Day = top(last7DaysThx, `from`);
+  let topChannel = countTopChannel(allThx);
+
+
   (async () => {
     // See: https://api.slack.com/methods/chat.postMessage
 
@@ -130,7 +155,24 @@ let notify = async () => {
             "type": "section",
             "text": {
               "type": "mrkdwn",
-              "text": topTo.map((item, i) => `${getMedal(i)} *${item[0]}* 收到 *${item[1]}* 张好人卡 (+${item[2]})`).join(`\n`)
+              "text": topTo.map((item, i) => `${getMedal(i)} *${item[0]}* 收到 *${item[1]}* 张好人卡 (+${item[2]}赞)`).join(`\n`)
+            },
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "*最暖心频道*"
+            },
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": topChannel.map((item, i) => `${getMedal(i)} *${item[0]}* 一共有 *${item[1]}* 张好人卡 (+${item[2]}赞)`).join(`\n`)
             },
           },
           {
