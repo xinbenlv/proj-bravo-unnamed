@@ -48,14 +48,12 @@ let notify = async () => {
   let allThx = (await mongoDb.collection("Bravos").find({
     "raw.team_domain": process.env.SLACK_NAMESPACE
   }).toArray());
-
   let last7DaysThx = (await mongoDb.collection("Bravos").find({
     "raw.team_domain": process.env.SLACK_NAMESPACE,
     timestamp: {
       $gt: dateFns.subDays(new Date(), 7)
     }
   }).toArray());
-
   let topTo = top(allThx, `to`);
   let topFrom = top(allThx, `from`);
   let topToLast7Day = top(last7DaysThx, `to`);
@@ -68,65 +66,71 @@ let notify = async () => {
         channel: conversationId,
         blocks: [
           {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": ":medal: *好人墙* :medal:"
+            },
+          },
+          {
             "type": "divider"
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "*最近7天排行榜*"
+            },
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": topFromLast7Day.map((item, i) => `${getMedal(i)} *${item[0]}* 发出 *${item[1]}* 张好人卡 (+${item[2]}赞)`).join(`\n`)
+            },
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": topToLast7Day.map((item, i) => `${getMedal(i)} *${item[0]}* 收到 *${item[1]}* 张好人卡 (+${item[2]}赞)`).join(`\n`)
+            },
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "*总排行榜*"
+            },
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": topFrom.map((item, i) => `${getMedal(i)} *${item[0]}* 发出 *${item[1]}* 张好人卡 (+${item[2]}赞)`).join(`\n`)
+            },
           },
 
           {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": ":medal: *最近7天排行榜*"
-            },
-          },
-          {
             "type": "divider"
           },
           {
             "type": "section",
             "text": {
               "type": "mrkdwn",
-              "text": topFromLast7Day.map((item, i) => `${getMedal(i)} *${item[0]}* gave *${item[1]}* (+${item[2]}) bravos`).join(`\n`)
-            },
-          },
-          {
-            "type": "divider"
-          },
-          {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": topToLast7Day.map((item, i) => `${getMedal(i)} *${item[0]}* received *${item[1]}* (+${item[2]}) bravos`).join(`\n`)
-            },
-          },
-          {
-            "type": "divider"
-          },
-          {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": ":medal: *总排行榜*"
-            },
-          },
-          {
-            "type": "divider"
-          },
-          {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": topFrom.map((item, i) => `${getMedal(i)} *${item[0]}* gave *${item[1]}* (+${item[2]}) bravos`).join(`\n`)
-            },
-          },
-
-          {
-            "type": "divider"
-          },
-          {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": topTo.map((item, i) => `${getMedal(i)} *${item[0]}* received *${item[1]}* (+${item[2]}) bravos`).join(`\n`)
+              "text": topTo.map((item, i) => `${getMedal(i)} *${item[0]}* 收到 *${item[1]}* 张好人卡 (+${item[2]})`).join(`\n`)
             },
           },
           {
@@ -155,9 +159,11 @@ let notify = async () => {
     console.log('Message sent: ', res.ts);
   })();
 };
-let main = function() {
+let main = async  function() {
   require(`dotenv`).config();
-  notify().then().catch();
+  console.log(`start`);
+  await notify();
+  console.log(`done`);
 };
 
 if (require.main === module) {
