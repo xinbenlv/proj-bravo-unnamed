@@ -75,7 +75,7 @@ let notify = async () => {
             "type": "section",
             "text": {
               "type": "mrkdwn",
-              "text": ":medal: *本周排行榜*"
+              "text": ":medal: *最近7天排行榜*"
             },
           },
           {
