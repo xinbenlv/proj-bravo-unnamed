@@ -15,28 +15,23 @@ app.use(router);
 
 // parse application/json
 app.use(bodyParser.json());
+const MongoClient = require('mongodb').MongoClient;
 const asyncHandler = fn => (req, res, next) =>
   Promise
     .resolve(fn(req, res, next))
     .catch(next);
 
-const MongoClient = require('mongodb').MongoClient;
 MongoClient.connect(process.env.MONGODB_URI)
   .then((mongoClient) => {
     let mongoDb = mongoClient.db(process.env.MONGODB_DB);
     const tokenizer = require('string-tokenizer');
     router.post(`/bravobot/interact`, asyncHandler(async (req, res) => {
-      console.log(`11111`);
       let payload = req.body.payload;
-      console.log(`222`);
       let data = JSON.parse(payload);
-      console.log(`333`);
       logger.debug(`Received a request`, JSON.stringify(data, null, 2));
-      console.log(`444`);
-      let objectId = data.actions[0].action_id;
-      console.log(`555 ${objectId}`);
+
       let bravo = (await mongoDb.collection(`Bravos`).findOneAndUpdate(
-        {_id: new ObjectId(objectId)},
+        {_id: new ObjectId(data.callback_id)},
         {
           // $push: {plus_one_raw_array: data},
           $addToSet: {plus_one_set: data.user.name}
@@ -45,39 +40,37 @@ MongoClient.connect(process.env.MONGODB_URI)
           returnOriginal: false
         }
       ));
-      console.log(`666`, bravo);
-      let retMessage = data.message;
-      retMessage.replace_original = true;
-      console.log(`777 retMessage`, JSON.stringify(retMessage, null, 2));
-      console.log(`777 1 retMessage.blocks[1]`, JSON.stringify(retMessage.blocks[1], null, 2));
-      console.log(`777 2 retMessage.blocks[1].elements`, JSON.stringify(retMessage.blocks[1].elements[0], null, 2));
-      console.log(`777 2 retMessage.blocks[1].elements.text`, JSON.stringify(retMessage.blocks[1].elements[0].text, null, 2));
-      try {
-        retMessage.blocks[1].elements[0].text.text = `:thumbsup: +1 (${bravo.value.plus_one_set.length})`;
-      } catch(e) {
-        console.error(e);
+
+      let retMessage = data.original_message;
+      if (data.actions.length === 1) {
+        if (data.actions[0].value === "plus_one") {
+          retMessage.attachments[0].actions[0].text = `+1 (${bravo.value.plus_one_set.length})`;
+        } else if (data.actions[0].value === "teach_me") {
+          retMessage.attachments[0].fields.push({
+            "title": "分发方法",
+            "type": "markdown",
+            "value": "`/thank [@user] for [reason].`",
+            "short": false
+          })
+        }
       }
-      console.log(`888 retMessage`, JSON.stringify(retMessage, null, 2));
+
       res.send(retMessage);
 
     }));
-    console.log(`999`);
+
     router.get(`/bravos/list`, asyncHandler(async (req, res) => {
-      console.log(`10 XXX`);
       let q = req.query;
       let filter = {};
       if (q['team_domain']) {
         filter['raw.team_domain'] = q['team_domain']
       }
-      console.log(`11 XXX`);
       console.log(filter);
       let ret = await mongoDb.collection(`Bravos`)
         .find(filter)
         .sort({timestamp: -1})
         .limit(20).toArray();
-      console.log(`12 XXX`);
       res.send(ret);
-      console.log(`13 XXX`);
     }));
 
     router.post(`/bravobot/slash/thank`, asyncHandler(async (req, res) => {
@@ -118,52 +111,26 @@ MongoClient.connect(process.env.MONGODB_URI)
         raw_data_type: `slack_slash_command`
       });
 
+
       res.send({
         "response_type": "in_channel",
-        // "text": `群友 @${from} 诚心诚意地 载歌在谷感谢墙 写下：`,
-        "blocks": [
+        "text": `:medal: 收到群友 @${from} 发给@${to}的点赞，理由是@${reason}`,
+        "attachments": [
           {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": `*@${from}* 给 *${to.join(', ')}* 发送了一个bravo :clap: :\nthanks @${to.join(', ')} for ${reason}\n\n <https://thx.zgzggala.org|查看感谢墙>`,
-            },
-            "accessory": {
-              "type": "image",
-              "image_url": "https://cdn.dribbble.com/users/791680/screenshots/5421599/wintercamp-03_4x.png",
-              "alt_text": "computer thumbnail"
-            }
-          },
-          {
-            "type": "actions",
-            "elements": [
+            "color": "#2eb886",
+            "callback_id": `${bravo.ops[0]._id}`,
+            "actions": [
               {
+                "name": "plus_one",
+                "text": "+1",
+                "style": "primary",
                 "type": "button",
-                "action_id": `${bravo.ops[0]._id}`,
-                "text": {
-                  "type": "plain_text",
-                  "text": ":thumbsup: +1",
-                  "emoji": true
-                },
-                "value": "click_me_123",
-                "style": "primary"
-              }
-            ]
-          },
-          {
-            "type": "divider"
-          },
-          {
-            "type": "context",
-            "elements": [
-              {
-                "type": "mrkdwn",
-                "text": "/thanks @name for [reason] 发送感谢  |  *Author:* Zainan Zhou, Peipei Wang"
-              }
-            ]
+                "value": "plus_one"
+              },
+            ],
+            "ts": now.getTime()/1000.0
           }
-        ],
-        "ts": now.getTime()/1000.0
+        ]
       });
     }));
   }).catch(e=>logger.error(e));
