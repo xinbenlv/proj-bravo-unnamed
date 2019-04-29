@@ -15,12 +15,12 @@ app.use(router);
 
 // parse application/json
 app.use(bodyParser.json());
-const MongoClient = require('mongodb').MongoClient;
 const asyncHandler = fn => (req, res, next) =>
   Promise
     .resolve(fn(req, res, next))
     .catch(next);
 
+const MongoClient = require('mongodb').MongoClient;
 MongoClient.connect(process.env.MONGODB_URI)
   .then((mongoClient) => {
     let mongoDb = mongoClient.db(process.env.MONGODB_DB);

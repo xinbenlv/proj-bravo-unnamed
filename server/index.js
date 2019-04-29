@@ -1,11 +1,12 @@
-const express = require('express')
-const consola = require('consola')
-const { Nuxt, Builder } = require('nuxt')
-const app = express()
+const notify = require('../utils/notify').notify;
 
+const express = require('express');
+const consola = require('consola');
+const { Nuxt, Builder } = require('nuxt');
+const app = express();
 // Import and Set Nuxt.js options
-const config = require('../nuxt.config.js')
-config.dev = !(process.env.NODE_ENV === 'production')
+const config = require('../nuxt.config.js');
+config.dev = !(process.env.NODE_ENV === 'production');
 
 async function start() {
   // Init Nuxt.js
@@ -31,6 +32,12 @@ async function start() {
   consola.ready({
     message: `Server listening on http://${host}:${port}`,
     badge: true
-  })
+  });
+
+  var CronJob = require('cron').CronJob;
+  // Friday 11:45
+  new CronJob(process.env.NOTIFY_SCHEDULE, async function() {
+    await notify();
+  }, null, true, 'America/Los_Angeles');
 }
-start()
+start();
